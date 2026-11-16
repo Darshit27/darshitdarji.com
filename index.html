@@ -9,6 +9,14 @@
 <meta property="og:description" content="Electronics engineer · Sensors, VLSI, PCB design, robotics">
 <meta property="og:image" content="https://darshitdarji.com/assets/darshit.jpg">
 <meta name="theme-color" content="#08090b">
+<link rel="canonical" href="https://darshitdarji.com/">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://darshitdarji.com/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Darshit Darji">
+<meta name="twitter:description" content="Electronics engineer · Sensors, VLSI, PCB design, robotics">
+<meta name="twitter:image" content="https://darshitdarji.com/assets/darshit.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Darshit Darji", "url": "https://darshitdarji.com/", "image": "https://darshitdarji.com/assets/darshit.jpg", "jobTitle": "Electronics Engineer", "email": "mailto:darshitdiy@gmail.com", "sameAs": ["https://www.linkedin.com/in/darshit27", "https://github.com/Darshit27"], "alumniOf": {"@type": "CollegeOrUniversity", "name": "Birla Vishvakarma Mahavidyalaya"}, "knowsAbout": ["Analog and mixed-signal circuit design", "VLSI", "PCB design", "Force and torque sensors", "Robotics hardware", "Instrumentation"]}</script>
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -213,10 +221,10 @@ main{position:relative;z-index:2}
   <div class="label rv">About</div>
   <p class="big" id="words" style="margin-top:18px">I approach engineering with clarity and persistence, aiming for solutions that are robust, efficient and easy to maintain. My work usually starts with curiosity about why something behaves the way it does. I value patience, precision, and learning through building.</p>
   <div class="stats rv">
-    <div class="stat"><b data-count="7">0</b><span>Patents (4 granted)</span></div>
-    <div class="stat"><b data-count="15">0</b><span>Projects</span></div>
-    <div class="stat"><b data-count="3">0</b><span>Research organisations</span></div>
-    <div class="stat"><b data-count="9">0</b><span>Awards and recognitions</span></div>
+    <div class="stat"><b data-count="7">7</b><span>Patents (4 granted)</span></div>
+    <div class="stat"><b data-count="15">15</b><span>Projects</span></div>
+    <div class="stat"><b data-count="3">3</b><span>Research organisations</span></div>
+    <div class="stat"><b data-count="9">9</b><span>Awards and recognitions</span></div>
   </div>
 </div></section>
 
@@ -258,20 +266,36 @@ main{position:relative;z-index:2}
 <section class="sec" id="projects"><div class="wrap">
   <div class="label rv">Projects</div>
   <h2 class="rv">Projects</h2>
-  <div class="filters rv" id="filters" role="group" aria-label="Filter projects"></div>
-  <div class="grid" id="grid"></div>
+  <div class="filters rv" id="filters" role="group" aria-label="Filter projects"><button type="button" data-f="all" aria-pressed="true">All<span>15</span></button><button type="button" data-f="inst" aria-pressed="false">Instrumentation<span>1</span></button><button type="button" data-f="vlsi" aria-pressed="false">VLSI<span>3</span></button><button type="button" data-f="sense" aria-pressed="false">Sensors<span>3</span></button><button type="button" data-f="robot" aria-pressed="false">Robotics<span>7</span></button><button type="button" data-f="space" aria-pressed="false">Space<span>1</span></button></div>
+  <div class="grid" id="grid">
+<article class="card rv" data-k="inst"><div class="top"><span class="tag t-inst">Instrumentation</span><span class="d">2026</span></div><h3>AC Current Source V1</h3><p>Bench source that drives up to 15 A peak sine at 10–50 kHz through a straight wire or bus bar, used to characterise a Hall-effect current sensor. Current-feedback amplifier driving six paralleled push-pull transistor pairs, ±12 V from isolated DC-DC converters. Debugged parasitic oscillations, loop stability and output offset on the bench.</p><a class="go" href="/guides/ac-current-source-v1/">Operating guide →</a></article>
+<article class="card rv" data-k="vlsi"><div class="top"><span class="tag t-vlsi">VLSI</span><span class="d">Oct 2025</span></div><h3>45 nm two-stage NMOS-input OTA</h3><p>Two-stage OTA with RC and tracking compensation: 50 dB DC gain, 100 MHz unity-gain frequency, 100 V/µs slew rate. Layout and post-layout verification in Cadence Virtuoso.</p></article>
+<article class="card rv" data-k="vlsi"><div class="top"><span class="tag t-vlsi">VLSI</span><span class="d">Sep 2025</span></div><h3>Custom NOR2B standard cell, SkyWater 130 nm</h3><p>SPICE simulation, layout, DRC/LVS, PEX and full library generation (.lib, .lef, .v) for standard-cell integration.</p></article>
+<article class="card rv" data-k="vlsi"><div class="top"><span class="tag t-vlsi">VLSI</span><span class="d">Sep 2025</span></div><h3>45 nm CMOS common-source amplifier</h3><p>Schematic to post-layout verification against 18 dB gain and 4 MHz bandwidth targets.</p></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">Jul 2025</span></div><h3>Brushless limited-angle slip ring</h3><p>Flex-PCB architecture for reliable signal and power transfer in legged robots.</p><div class="at">IISc</div></article>
+<article class="card rv" data-k="sense"><div class="top"><span class="tag t-sense">Sensors</span><span class="d">Nov 2024 – Jul 2025</span></div><h3>Multi-axis foot contact and force sensor</h3><p>3-axis strain-based foot force sensor with CAN FD interface and an auxiliary pivot for higher load capacity.</p><div class="at">IISc</div></article>
+<article class="card rv" data-k="sense"><div class="top"><span class="tag t-sense">Sensors</span><span class="d">Sep 2024 – Jul 2025</span></div><h3>Single-axis foot contact and force sensor</h3><p>Strain-based contact sensor with an embedded CAN FD acquisition circuit for compact robots.</p><div class="at">IISc</div></article>
+<article class="card rv" data-k="sense"><div class="top"><span class="tag t-sense">Sensors</span><span class="d">Feb – Apr 2024</span></div><h3>Mobile mapping system</h3><p>Electronics for a mule-mounted terrain mapping system with LiDAR, depth camera and IMU.</p><div class="at">IISc</div></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">Jul 2023</span></div><h3>Wireless iBus bridge over ESP-NOW</h3><p>Synchronised multi-drone control for swarm applications with 7 ms communication latency.</p><div class="at">GUJCOST</div></article>
+<article class="card rv" data-k="space"><div class="top"><span class="tag t-space">Space</span><span class="d">Dec 2022 – May 2023</span></div><h3>Closed-loop control of a hexapod mechanism</h3><p>Hardware and Python control software for a hexapod being developed for a space telescope.</p><div class="at">ISRO</div></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">2022 – 2025</span></div><h3>iDropX21 eye-drop instilling robot</h3><p>Concept for an AI-enabled autonomous eye-drop instilling robot. Patented; recognised by Autodesk.</p><div class="at">Autodesk</div></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">Feb – Jul 2022</span></div><h3>Lagori playing robots, DD Robocon</h3><p>Led electronics and design. Best New Team award at DD Robocon 2022.</p><div class="at">IIT Delhi</div></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">Nov 2020 – Dec 2021</span></div><h3>OxidaneX21 underwater robot</h3><p>Five-DOF underwater robot. First prize and ₹5,00,000 at GUJCOST Robofest 2.0.</p><div class="at">GUJCOST</div></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">2017</span></div><h3>Quadcopter</h3><p>Wooden-frame quadcopter. Best Technical Project at a school science fair.</p><div class="at">School</div></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">2016</span></div><h3>CNC plotter</h3><p>Wooden CNC plotter built in high school.</p><div class="at">School</div></article>
+</div>
 </div></section>
 
 <section class="sec" id="patents"><div class="wrap">
   <div class="label rv">Patents</div>
   <h2 class="rv">Patents <em>· 4 granted, 3 filed</em></h2>
-  <div class="list rv" id="pat"></div>
+  <div class="list rv" id="pat"><div class="li"><span class="k g">GRANTED · JUN 2023</span><h3>Eye drops instilling robot</h3><span class="r">Utility · 435534</span></div><div class="li"><span class="k g">GRANTED · FEB 2023</span><h3>An apparatus for self-instillation of eyedrops</h3><span class="r">Design · 356339-001</span></div><div class="li"><span class="k g">GRANTED · JAN 2023</span><h3>Eye drops instilling robot</h3><span class="r">Design · 356340-001</span></div><div class="li"><span class="k g">GRANTED · SEP 2023</span><h3>Underwater robot</h3><span class="r">Design · 356337-001</span></div><div class="li"><span class="k f">FILED · AUG 2025</span><h3>System and method for sensing force and torque in legged robots</h3><span class="r">Utility · IN202541076934</span></div><div class="li"><span class="k f">FILED · AUG 2025</span><h3>Force sensing apparatus for detecting ground contact in legged robots</h3><span class="r">Utility · IN202541076755</span></div><div class="li"><span class="k f">FILED · JAN 2022</span><h3>Swappable battery unit for underwater vehicles</h3><span class="r">Utility · 202221001155A</span></div></div>
 </div></section>
 
 <section class="sec" id="awards"><div class="wrap">
   <div class="label rv">Awards</div>
   <h2 class="rv">Awards</h2>
-  <div class="list rv" id="aw"></div>
+  <div class="list rv" id="aw"><div class="li"><span class="k">2023</span><h3>Winner, Gaurav Puraskar</h3><span class="r">Gujarat</span></div><div class="li"><span class="k">2023</span><h3>National Finalist, GUJCOST Robofest 3.0</h3><span class="r">India</span></div><div class="li"><span class="k">2022</span><h3>Abdul Kalam Award for the Best New Team, DD Robocon 2022</h3><span class="r">IIT Delhi</span></div><div class="li"><span class="k">2022</span><h3>State Winner, GUJCOST Robofest 2.0</h3><span class="r">Gujarat</span></div><div class="li"><span class="k">2022</span><h3>Winner, 'Parametric' Design Contest</h3><span class="r">Autodesk</span></div><div class="li"><span class="k">2022</span><h3>First Runner-up, Fusion 360 Design Challenge</h3><span class="r">Autodesk</span></div><div class="li"><span class="k">2021</span><h3>First Runner-up, The Conception Product Design Battle</h3><span class="r">Autodesk</span></div><div class="li"><span class="k">2018</span><h3>Winner, Science Fair</h3><span class="r">Anand</span></div><div class="li"><span class="k">2015</span><h3>National Means-cum-Merit Scholarship (NMMS)</h3><span class="r">India</span></div></div>
 </div></section>
 
 <section class="sec" id="skills"><div class="wrap">
@@ -316,59 +340,12 @@ const $ = s => document.querySelector(s);
 const root = document.documentElement;
 $("#yr").textContent = new Date().getFullYear();
 
-/* ---------- content ---------- */
-const PROJECTS = [
- ["inst","AC Current Source V1","Bench source that drives up to 15 A peak sine at 10–50 kHz through a straight wire or bus bar, used to characterise a Hall-effect current sensor. Current-feedback amplifier driving six paralleled push-pull transistor pairs, ±12 V from isolated DC-DC converters. Debugged parasitic oscillations, loop stability and output offset on the bench.","2026","",["Operating guide","/guides/ac-current-source-v1/"]],
- ["vlsi","45 nm two-stage NMOS-input OTA","Two-stage OTA with RC and tracking compensation: 50 dB DC gain, 100 MHz unity-gain frequency, 100 V/µs slew rate. Layout and post-layout verification in Cadence Virtuoso.","Oct 2025",""],
- ["vlsi","Custom NOR2B standard cell, SkyWater 130 nm","SPICE simulation, layout, DRC/LVS, PEX and full library generation (.lib, .lef, .v) for standard-cell integration.","Sep 2025",""],
- ["vlsi","45 nm CMOS common-source amplifier","Schematic to post-layout verification against 18 dB gain and 4 MHz bandwidth targets.","Sep 2025",""],
- ["robot","Brushless limited-angle slip ring","Flex-PCB architecture for reliable signal and power transfer in legged robots.","Jul 2025","IISc"],
- ["sense","Multi-axis foot contact and force sensor","3-axis strain-based foot force sensor with CAN FD interface and an auxiliary pivot for higher load capacity.","Nov 2024 – Jul 2025","IISc"],
- ["sense","Single-axis foot contact and force sensor","Strain-based contact sensor with an embedded CAN FD acquisition circuit for compact robots.","Sep 2024 – Jul 2025","IISc"],
- ["sense","Mobile mapping system","Electronics for a mule-mounted terrain mapping system with LiDAR, depth camera and IMU.","Feb – Apr 2024","IISc"],
- ["robot","Wireless iBus bridge over ESP-NOW","Synchronised multi-drone control for swarm applications with 7 ms communication latency.","Jul 2023","GUJCOST"],
- ["space","Closed-loop control of a hexapod mechanism","Hardware and Python control software for a hexapod being developed for a space telescope.","Dec 2022 – May 2023","ISRO"],
- ["robot","iDropX21 eye-drop instilling robot","Concept for an AI-enabled autonomous eye-drop instilling robot. Patented; recognised by Autodesk.","2022 – 2025","Autodesk"],
- ["robot","Lagori playing robots, DD Robocon","Led electronics and design. Best New Team award at DD Robocon 2022.","Feb – Jul 2022","IIT Delhi"],
- ["robot","OxidaneX21 underwater robot","Five-DOF underwater robot. First prize and ₹5,00,000 at GUJCOST Robofest 2.0.","Nov 2020 – Dec 2021","GUJCOST"],
- ["robot","Quadcopter","Wooden-frame quadcopter. Best Technical Project at a school science fair.","2017","School"],
- ["robot","CNC plotter","Wooden CNC plotter built in high school.","2016","School"]
-];
-const TAG = {inst:"Instrumentation", vlsi:"VLSI", sense:"Sensors", robot:"Robotics", space:"Space"};
-const PATENTS = [
- ["g","Granted · Jun 2023","Eye drops instilling robot","Utility · 435534"],
- ["g","Granted · Feb 2023","An apparatus for self-instillation of eyedrops","Design · 356339-001"],
- ["g","Granted · Jan 2023","Eye drops instilling robot","Design · 356340-001"],
- ["g","Granted · Sep 2023","Underwater robot","Design · 356337-001"],
- ["f","Filed · Aug 2025","System and method for sensing force and torque in legged robots","Utility · IN202541076934"],
- ["f","Filed · Aug 2025","Force sensing apparatus for detecting ground contact in legged robots","Utility · IN202541076755"],
- ["f","Filed · Jan 2022","Swappable battery unit for underwater vehicles","Utility · 202221001155A"]
-];
-const AWARDS = [
- ["2023","Winner, Gaurav Puraskar","Gujarat"],
- ["2023","National Finalist, GUJCOST Robofest 3.0","India"],
- ["2022","Abdul Kalam Award for the Best New Team, DD Robocon 2022","IIT Delhi"],
- ["2022","State Winner, GUJCOST Robofest 2.0","Gujarat"],
- ["2022","Winner, 'Parametric' Design Contest","Autodesk"],
- ["2022","First Runner-up, Fusion 360 Design Challenge","Autodesk"],
- ["2021","First Runner-up, The Conception Product Design Battle","Autodesk"],
- ["2018","Winner, Science Fair","Anand"],
- ["2015","National Means-cum-Merit Scholarship (NMMS)","India"]
-];
-
-/* projects + filters */
+/* projects, patents and awards are written in the HTML above; this only filters them */
 const grid=$("#grid");
-grid.innerHTML = PROJECTS.map(p=>`<article class="card rv" data-k="${p[0]}"><div class="top"><span class="tag t-${p[0]}">${TAG[p[0]]}</span><span class="d">${p[3]}</span></div><h3>${p[1]}</h3><p>${p[2]}</p>${p[4]?`<div class="at">${p[4]}</div>`:""}${p[5]?`<a class="go" href="${p[5][1]}">${p[5][0]} →</a>`:""}</article>`).join("");
-const counts = PROJECTS.reduce((a,p)=>(a[p[0]]=(a[p[0]]||0)+1,a),{});
-const F=[["all","All",PROJECTS.length],...Object.keys(TAG).map(k=>[k,TAG[k],counts[k]||0])];
-$("#filters").innerHTML = F.map((f,i)=>`<button type="button" data-f="${f[0]}" aria-pressed="${i===0}">${f[1]}<span>${f[2]}</span></button>`).join("");
 $("#filters").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return;
   $("#filters").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
   grid.querySelectorAll(".card").forEach(c=>{ c.hidden = !(b.dataset.f==="all"||c.dataset.k===b.dataset.f); c.classList.add("in"); });
 });
-$("#pat").innerHTML = PATENTS.map(p=>`<div class="li"><span class="k ${p[0]}">${p[1].toUpperCase()}</span><h3>${p[2]}</h3><span class="r">${p[3]}</span></div>`).join("");
-$("#aw").innerHTML = AWARDS.map(a=>`<div class="li"><span class="k">${a[0]}</span><h3>${a[1]}</h3><span class="r">${a[2]}</span></div>`).join("");
-
 /* about words */
 const wordsEl=$("#words");
 wordsEl.innerHTML = wordsEl.textContent.trim().split(/\s+/).map(w=>`<span>${w}</span>`).join(" ");
@@ -394,7 +371,7 @@ const cio=new IntersectionObserver(es=>es.forEach(e=>{ if(!e.isIntersecting) ret
   const el=e.target,n=+el.dataset.count; if(RM){el.textContent=n;return;} const t0=performance.now();
   (function f(t){const k=Math.min(1,(t-t0)/1100); el.textContent=Math.round(n*(1-Math.pow(1-k,3))); if(k<1) requestAnimationFrame(f);})(t0);
 }),{threshold:.6});
-document.querySelectorAll("[data-count]").forEach(el=>cio.observe(el));
+document.querySelectorAll("[data-count]").forEach(el=>{ if(!RM) el.textContent="0"; cio.observe(el); });
 
 /* ---------- hero: magnetic field around a wire that follows the cursor ---------- */
 const cv=$("#field"), cx=cv.getContext("2d");
