@@ -146,13 +146,17 @@ tr.lim td{color:var(--warn);font-weight:600}
 .drawer p{margin:.3em 0}
 .calc{display:grid;gap:10px}
 .calc .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.9rem}
-.calc select{font:600 .85rem var(--f-mono);padding:7px 6px;border:0;border-bottom:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:0}
-.calc input{font:600 1rem var(--f-mono);width:6.5em;padding:7px 9px;border:0;border-bottom:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:0}
-.calc .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:2px}
+.calc select{font:600 1rem var(--f-mono);padding:8px 6px;border:0;border-bottom:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:0}
+.calc input{font:600 1.4rem var(--f-mono);width:5.2em;padding:6px 8px;border:0;border-bottom:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:0}
+.calc .out{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}
 .calc .out div{background:var(--glass);padding:8px 10px}
-.calc .out b{display:block;font:600 1rem var(--f-mono)}
+.calc .out b{display:block;font:600 1.55rem/1.2 var(--f-mono);margin-top:4px;font-variant-numeric:tabular-nums}
+.calc .out div{padding:12px 12px!important}
+.calc.err .out b{color:var(--mute);text-decoration:line-through;text-decoration-thickness:1px}
+.calc.err input{border-bottom-color:var(--warn);color:var(--warn)}
+.calc .msg.e{background:var(--warn-soft);color:var(--warn)!important;padding:8px 12px;border-radius:12px}
 .calc .out span{font:400 .6rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}
-.calc .msg{font-size:.88rem;font-weight:600;min-height:1.3em}
+.calc .msg{font-size:.95rem;font-weight:600;min-height:1.3em}
 
 /* home */
 .home h1.greet{font-size:clamp(2.1rem,5.2vw,3.8rem);line-height:1.04;margin:4px 0 18px;cursor:pointer;max-width:16ch}
@@ -245,6 +249,7 @@ svg .mono{font-family:var(--f-mono)}
       <span><b class="full">AC Current Source V1</b><b class="short">AC Source V1</b> <em>· Operating procedure</em></span>
     </button>
     <span class="count" id="count"></span>
+    <a class="tb" id="tbHome" href="/guides/" style="display:inline-flex;align-items:center;text-decoration:none">Home</a>
     <button class="tb" id="tbSteps" type="button">Steps</button>
     <button class="tb" id="tbHelp" type="button">Help</button>
     <button class="tb" id="tbTheme" type="button" aria-label="Toggle light or dark">
@@ -652,7 +657,7 @@ let greet=(()=>{let last=-1; try{last=+localStorage.getItem("acsrc-greet");}catc
 const LS="acsrc-proc-v7";
 const fresh=()=>({cur:"home",reached:0,mode:null,flow:"run",choice:{},ticks:{}});
 let st=fresh();
-try{const r=JSON.parse(localStorage.getItem(LS)||"null"); if(r&&typeof r.cur==="string") st=Object.assign(fresh(),r);}catch(e){}
+try{localStorage.removeItem(LS);}catch(e){} /* every visit starts clean */
 const save=()=>{try{localStorage.setItem(LS,JSON.stringify(st));}catch(e){}};
 const idx=id=>S.findIndex(s=>s.id===id); if(idx(st.cur)<0) st.cur="home";
 const $=id=>document.getElementById(id);
@@ -697,30 +702,44 @@ function draw(step){
 }
 
 /* ---------- widgets ---------- */
+const IPK_MAX=K_IPK*VPP_MAX;   // ≈ 15.1 A peak
 function ampCalc(){
   const d=document.createElement("div"); d.className="calc";
   d.innerHTML=`<div class="row"><label for="ci">Target current</label><input id="ci" type="number" inputmode="decimal" min="0" step="0.5" value="10">
     <select id="cu" aria-label="Unit"><option value="pk">A peak</option><option value="rms">A rms</option></select></div>
   <div class="out"><div><span>Set generator to</span><b id="o1"></b></div><div><span>Scope Pk-Pk</span><b id="o2"></b></div><div><span>I pk / I rms</span><b id="o3"></b></div><div><span>Supply draw</span><b id="o4"></b></div></div>
-  <div class="msg" id="om" aria-live="polite"></div><p style="font-size:.75rem;color:var(--mute);margin:0">Calibrated at 10 kHz. Higher frequency needs a little more; trim on the scope.</p>`;
-  const u=()=>{const v=parseFloat(d.querySelector("#ci").value),rms=d.querySelector("#cu").value==="rms",g=isFinite(v)&&v>=0,m=d.querySelector("#om");
-    const ipk=g?(rms?v*Math.SQRT2:v):0, vpp=ipk/K_IPK;
-    d.querySelector("#o1").textContent=g?vpp.toFixed(2)+" Vpp":"–"; d.querySelector("#o2").textContent=g?(ipk*.4).toFixed(2)+" V":"–";
-    d.querySelector("#o3").textContent=g?`${ipk.toFixed(1)} / ${(ipk/Math.SQRT2).toFixed(1)} A`:"–"; d.querySelector("#o4").textContent=g?(P_IDLE+24*ipk/Math.PI).toFixed(0)+" W":"–";
-    m.style.color="var(--warn)";
-    if(!g) m.textContent="";
-    else if(v===42) m.textContent="42 A: the answer to everything, except this board. V1 tops out at 15 A peak.";
-    else if(vpp>VPP_MAX) m.textContent=`Needs ${vpp.toFixed(1)} Vpp, above the ${VPP_MAX} Vpp limit. V1 tops out at 15 A peak; wait for V2.`;
-    else if(vpp>5) m.textContent="Above 5 Vpp: short runs, monitor temperature.";
-    else {m.textContent="Within limits.";m.style.color="var(--ok)";}};
+  <div class="msg" id="om" aria-live="polite"></div><p style="font-size:.75rem;color:var(--mute);margin:0">Calibrated at 10 kHz. Higher frequency needs a little more; trim on the scope. Limit: ${IPK_MAX.toFixed(1)} A peak (${(IPK_MAX/Math.SQRT2).toFixed(1)} A rms).</p>`;
+  const u=()=>{const raw=d.querySelector("#ci").value, v=parseFloat(raw), rms=d.querySelector("#cu").value==="rms", m=d.querySelector("#om");
+    const ipk=rms?v*Math.SQRT2:v, vpp=ipk/K_IPK;
+    let err="";
+    if(raw===""||!isFinite(v)) err="Enter a current.";
+    else if(v<=0) err="Current must be greater than 0.";
+    else if(v===42) err="42 A: the answer to everything, except this board. Limit is "+IPK_MAX.toFixed(1)+" A peak.";
+    else if(ipk>IPK_MAX) err=`Beyond V1's limit. Maximum is ${IPK_MAX.toFixed(1)} A peak (${(IPK_MAX/Math.SQRT2).toFixed(1)} A rms) at ${VPP_MAX} Vpp.`;
+    d.classList.toggle("err",!!err);
+    const ok=isFinite(v)&&v>0;
+    d.querySelector("#o1").textContent=ok?vpp.toFixed(2)+" Vpp":"–"; d.querySelector("#o2").textContent=ok?(ipk*.4).toFixed(2)+" V":"–";
+    d.querySelector("#o3").textContent=ok?`${ipk.toFixed(1)} / ${(ipk/Math.SQRT2).toFixed(1)} A`:"–"; d.querySelector("#o4").textContent=ok?(P_IDLE+24*ipk/Math.PI).toFixed(0)+" W":"–";
+    m.className="msg"+(err?" e":"");
+    if(err){ m.textContent=err; }
+    else if(vpp>5){ m.textContent="Above 5 Vpp: short runs, monitor temperature."; m.style.color="var(--warn)"; }
+    else { m.textContent="Within limits."; m.style.color="var(--ok)"; }};
   d.querySelectorAll("input,select").forEach(x=>x.addEventListener("input",u)); u(); return d;
 }
 function fieldCalc(){
   const d=document.createElement("div"); d.className="calc";
   d.innerHTML=`<div class="row"><input id="fi" type="number" inputmode="decimal" min="0" step="0.5" value="11.4" aria-label="Peak current, A"><span>A pk at</span><input id="fr" type="number" inputmode="decimal" min="0.1" step="0.5" value="5" aria-label="Distance, mm"><span>mm from wire centre</span></div>
   <div class="out"><div><span>B peak</span><b id="b1"></b></div><div><span>B rms</span><b id="b2"></b></div></div>
-  <p style="font-size:.78rem;color:var(--mute)">Long straight wire: B = μ₀I / 2πr</p>`;
-  const u=()=>{const I=parseFloat(d.querySelector("#fi").value),r=parseFloat(d.querySelector("#fr").value)/1000,g=isFinite(I)&&r>0,B=g?2e-7*I/r:0;
+  <div class="msg" id="bm" aria-live="polite"></div>
+  <p style="font-size:.78rem;color:var(--mute);margin:0">Long straight wire: B = μ₀I / 2πr</p>`;
+  const u=()=>{const I=parseFloat(d.querySelector("#fi").value), rm=parseFloat(d.querySelector("#fr").value), r=rm/1000, m=d.querySelector("#bm");
+    let err="";
+    if(!isFinite(I)||!isFinite(rm)) err="Enter a current and a distance.";
+    else if(I<=0) err="Current must be greater than 0.";
+    else if(I>IPK_MAX) err=`Beyond V1's limit of ${IPK_MAX.toFixed(1)} A peak.`;
+    else if(rm<=0) err="Distance must be greater than 0.";
+    d.classList.toggle("err",!!err); m.className="msg"+(err?" e":""); m.textContent=err;
+    const g=isFinite(I)&&r>0&&I>0, B=g?2e-7*I/r:0;
     d.querySelector("#b1").textContent=g?(B*1e3).toFixed(3)+" mT":"–"; d.querySelector("#b2").textContent=g?(B*1e3/Math.SQRT2).toFixed(3)+" mT":"–";};
   d.querySelectorAll("input").forEach(x=>x.addEventListener("input",u)); u(); return d;
 }
@@ -742,7 +761,7 @@ function render(){
    `<section class="sheet ${s.home?'home':''}">${s.home||s.done||s.runend?"":`<div class="num">${String(pos).padStart(2,"0")}</div>`}
     ${s.home?`<div class="sec">AC Current Source V1 · operating procedure</div><h1 class="greet" id="greet" title="Another one">${E(GREET[greet])}</h1>`:`<div class="sec">${E(s.sec)}${st.mode?(st.mode==="exp"?" · quick":" · full"):""}</div><h1>${E(s.title)}</h1>`}
     <div class="body">${s.body}</div>${s.q?`<p class="q">${E(s.q)}</p>`:""}<div id="x"></div><div id="mr"></div><div id="ck"></div></section>`;
-  if(s.home){ $("x").appendChild(opts([["beg","Full procedure","Every step, one action per page."],["exp","Quick checklist","For regular users. Combined checks, same safety gates."]],st.flow==="run"?st.mode:null,v=>{st.mode=v;st.flow="run";save();setTimeout(()=>go(1),170);},"Start a session"));
+  if(s.home){ $("x").appendChild(opts([["beg","Full procedure","Every step, one action per page."],["exp","Quick checklist","For regular users. Combined checks, same safety gates."]],st.flow==="run"?st.mode:null,v=>{const g=st.mode; st=fresh(); st.mode=v; st.flow="run"; save(); setTimeout(()=>go(1),170);},"Start a session"));
     const tl=document.createElement("div"); tl.className="tools";
     tl.innerHTML=`<button type="button" class="tool" id="tShut"><span class="ic"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1.5v6M4.2 3.8a5.5 5.5 0 1 0 7.6 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Shut down</button>
       <button type="button" class="tool" id="tCalc"><span class="ic"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="2.5" y="1.5" width="11" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 5h6M5 8.5h1M7.5 8.5h1M10 8.5h1M5 11.5h1M7.5 11.5h1M10 11.5h1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>Calculator</button>`;
@@ -806,6 +825,7 @@ document.addEventListener("keydown",e=>{
   if(document.querySelector(".ov:not([hidden])")){ if(e.key==="Escape") closeOv(); return; }
   if(e.key==="ArrowRight") go(1); if(e.key==="ArrowLeft") go(-1);
 });
+$("tbHome").addEventListener("click",()=>{st=fresh(); try{localStorage.removeItem(LS);}catch(e){}});
 /* the logo has a square-wave mode for anyone who clicks it seven times */
 let lc=0,lt=0;
 $("mark").addEventListener("click",()=>{const n=Date.now(); lc=n-lt<600?lc+1:1; lt=n;
