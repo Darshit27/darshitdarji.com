@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}</style>
+<title>AC Current Source V1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Semi+Condensed:wght@500;600;700&family=Martian+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: split screen. Left = dark "stage" holding the instrument drawing (only on steps that need one).
+   Right = the instruction, set like a procedure sheet: number, title, action, sign-off. Extras sit behind toggles. */
+:root{
+  --bg:#ffffff; --fill:#f0f1f1; --fill-2:#e4e6e7; --ink:#101416; --mute:#5c656a; --rule:#dfe2e3;
+  --stage:#262c2f; --stage-ink:#e8ebeb; --stage-mute:#98a3a8;
+  --accent:#e0531a; --accent-ink:#ffffff; --accent-soft:#fbe7dd;
+  --warn:#b8261b; --warn-soft:#f8e4e1; --ok:#1d7448;
+  --key:#1d2225; --key-ink:#f2f3f3;
+  --hl:#ff7a1a; --hl-ink:#1b0e00;
+  --f-head:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Martian Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  /* instrument drawings: fixed, they depict real hardware */
+  --afg-case:#e7e3d7; --afg-key:#f5f3ec; --afg-dark:#c9c4b4; --afg-scr:#1d4fa6;
+  --it-case:#3a4045; --it-key:#4f565c; --it-vfd:#06110e; --it-txt:#5ff2c9;
+  --sc-case:#e9ebee; --sc-scr:#05080a; --sc-key:#f7f8fa;
+  --frost:rgba(255,255,255,.55); --frost-line:rgba(255,255,255,.75); --frost-hi:rgba(255,255,255,.85);
+  --glass:rgba(255,255,255,.72); --blob2:#5b7cfa; --blob3:#1fb59a; --blob-o:.28;
+  --surface:var(--bg); --fg:var(--ink);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1113; --fill:#181d20; --fill-2:#21282b; --ink:#eceeee; --mute:#97a1a6; --rule:#262d31;
+  --stage:#191e21; --accent:#ff6a2e; --accent-ink:#140600; --accent-soft:#3a1a0c;
+  --warn:#ff7b6e; --warn-soft:#361411; --ok:#4cc58a; --key:#e6e9e9; --key-ink:#101416; --glass:rgba(16,20,23,.66); --blob-o:.22; --frost:rgba(255,255,255,.07); --frost-line:rgba(255,255,255,.14); --frost-hi:rgba(255,255,255,.12); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1113; --fill:#181d20; --fill-2:#21282b; --ink:#eceeee; --mute:#97a1a6; --rule:#262d31;
+  --stage:#191e21; --accent:#ff6a2e; --accent-ink:#140600; --accent-soft:#3a1a0c;
+  --warn:#ff7b6e; --warn-soft:#361411; --ok:#4cc58a; --key:#e6e9e9; --key-ink:#101416; --glass:rgba(16,20,23,.66); --blob-o:.22; --frost:rgba(255,255,255,.07); --frost-line:rgba(255,255,255,.14); --frost-hi:rgba(255,255,255,.12); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:70px;scroll-padding-bottom:90px}
+html{background:var(--bg)}
+body{min-height:100%;background:var(--bg);isolation:isolate;color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.5;
+  padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px));
+  padding-block:0 calc(76px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* top bar */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4)}
+.amb{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.amb i{position:absolute;border-radius:50%;filter:blur(70px);opacity:var(--blob-o);will-change:transform;
+  transform:translate3d(calc(var(--mx,0)*var(--d)*-1px),calc(var(--my,0)*var(--d)*-1px + var(--sy,0)*var(--d)*-.004px),0)}
+.amb i:nth-child(1){--d:40;width:46vmax;height:46vmax;left:-12vmax;top:-14vmax;background:var(--accent)}
+.amb i:nth-child(2){--d:26;width:40vmax;height:40vmax;right:-14vmax;top:22vh;background:var(--blob2)}
+.amb i:nth-child(3){--d:60;width:30vmax;height:30vmax;left:30vw;bottom:-16vmax;background:var(--blob3)}
+.bar1{display:flex;align-items:center;gap:6px;height:56px}
+.mark{display:flex;align-items:center;gap:10px;margin-right:auto;background:none;border:0;padding:0;cursor:pointer;min-width:0}
+.mark svg{flex:none;display:block}
+.mark span{font:700 .95rem var(--f-head);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mark span em{font-style:normal;color:var(--mute);font-weight:500}
+.mark b{font-weight:700}.mark .short{display:none}
+.tb{background:var(--frost);border:1px solid var(--frost-line);height:36px;padding:0 14px;border-radius:999px;font:600 .82rem var(--f-head);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--ink);box-shadow:inset 0 1px 0 var(--frost-hi);margin-left:4px}
+.tb:hover{border-color:var(--accent)}
+.count{font:600 .72rem var(--f-mono);color:var(--mute);padding:0 6px;white-space:nowrap}
+.prog{height:3px;background:var(--fill-2);position:relative}
+.prog i{position:absolute;inset:0 auto 0 0;background:var(--accent);transition:width .25s}
+
+/* step layout */
+main.step{display:grid;min-height:calc(100vh - 59px - 76px);position:relative}
+main.step.fig{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+main.step.nofig{grid-template-columns:minmax(0,1fr)}
+.stage{background:radial-gradient(120% 90% at calc(30% + var(--mx,0)*6%) calc(35% + var(--my,0)*6%),#3b464b 0,var(--stage) 62%);color:var(--stage-ink);display:flex;flex-direction:column;justify-content:center;padding:32px 84px 32px 28px;position:relative;min-width:0;overflow:hidden;perspective:1200px}
+.stage::before{content:"";position:absolute;inset:-40px;background-image:linear-gradient(#ffffff0d 1px,transparent 1px),linear-gradient(90deg,#ffffff0d 1px,transparent 1px);background-size:32px 32px;
+  transform:translate3d(calc(var(--mx,0)*-14px),calc(var(--my,0)*-14px),0);pointer-events:none}
+#art{position:relative;transform:translate3d(calc(var(--mx,0)*10px),calc(var(--my,0)*8px),0) rotateY(calc(var(--mx,0)*3deg)) rotateX(calc(var(--my,0)*-3deg));
+  transition:transform .25s ease-out;filter:drop-shadow(0 30px 40px #00000080) drop-shadow(0 6px 10px #00000060);animation:artin .5s cubic-bezier(.2,.7,.2,1) both}
+@keyframes artin{from{opacity:0;transform:translate3d(0,14px,0) scale(.98)}}
+.stage svg{display:block;width:100%;height:auto;max-height:66vh}
+.stage .cap{position:absolute;left:28px;bottom:16px;font:400 .66rem var(--f-mono);color:var(--stage-mute);letter-spacing:.04em;text-transform:uppercase}
+.stage .zb{position:absolute;right:12px;top:10px;z-index:3;background:#ffffff1f;border:1px solid #ffffff40;color:var(--stage-ink);font:600 .66rem var(--f-mono);padding:7px 12px;cursor:pointer;border-radius:999px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.sheet{padding:36px 44px 28px;min-width:0;max-width:720px;position:relative;z-index:2;background:var(--glass);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5)}
+main.fig .sheet{margin:28px 0 28px -64px;max-width:none;box-shadow:-30px 0 60px -30px #00000055;align-self:stretch}
+.sheet>*{animation:rise .42s cubic-bezier(.2,.7,.2,1) both}
+.sheet>*:nth-child(2){animation-delay:.03s}.sheet>*:nth-child(3){animation-delay:.06s}.sheet>*:nth-child(4){animation-delay:.09s}.sheet>*:nth-child(5){animation-delay:.12s}.sheet>*:nth-child(n+6){animation-delay:.15s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.q{font:400 .66rem/1.6 var(--f-mono);color:var(--mute);margin:18px 0 0;letter-spacing:.02em}
+.q::before{content:"// ";color:var(--accent)}
+main.nofig .sheet{align-self:start;margin:40px auto 32px;width:calc(100% - 32px);padding-top:44px;box-shadow:0 30px 80px -40px #00000055}
+.num{font:700 4.6rem/0.85 var(--f-head);color:var(--accent);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.sec{font:600 .68rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:14px 0 6px}
+h1{font:700 clamp(1.8rem,3vw,2.5rem)/1.05 var(--f-head);letter-spacing:-.005em;margin:0 0 14px;text-wrap:balance}
+.body p{margin:.5em 0;max-width:58ch}
+.body ul,.body ol{margin:.5em 0;padding-left:1.2em;max-width:58ch}
+.body li{margin:.25em 0}
+.body li::marker{color:var(--mute);font-family:var(--f-mono);font-size:.8em}
+.v{font:600 .82em var(--f-mono);white-space:nowrap}
+kbd{display:inline-block;font:600 .74rem/1 var(--f-mono);background:var(--key);color:var(--key-ink);padding:6px 8px 5px;border-radius:3px;white-space:nowrap;vertical-align:.1em;box-shadow:inset 0 -2px 0 #00000055}
+.seq{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:16px 0}
+.seq kbd{font-size:.82rem;padding:9px 11px 8px}
+.seq .ar{color:var(--mute);font:400 .8rem var(--f-mono)}
+.seq .k-n{position:relative}
+.seq .k-n::before{content:attr(data-n);position:absolute;top:-8px;right:-6px;background:var(--hl);color:var(--hl-ink);font:600 .55rem/1 var(--f-mono);padding:3px 4px;border-radius:2px}
+.alert{display:grid;grid-template-columns:auto 1fr;gap:0;margin:16px 0;max-width:58ch;background:var(--warn-soft)}
+.alert .tag{background:var(--warn);color:var(--bg);font:600 .62rem var(--f-mono);letter-spacing:.1em;writing-mode:vertical-rl;transform:rotate(180deg);padding:10px 6px;text-align:center}
+.alert div:last-child{padding:10px 14px;font-size:.96rem}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums;width:100%;max-width:58ch;font-size:.95rem}
+td,th{padding:8px 0;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font:600 .62rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+td.r,th.r{text-align:right;padding-left:12px;white-space:nowrap}
+td.r{font:400 .8rem var(--f-mono)}
+tr.lim td{color:var(--warn);font-weight:600}
+.tw{overflow-x:auto;max-width:100%}
+
+/* sign-off */
+.sign{margin:22px 0 4px;max-width:58ch}
+.sign .h{font:600 .62rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+.ck{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--rule);cursor:pointer}
+.ck:last-child{border-bottom:1px solid var(--rule)}
+.ck input{appearance:none;-webkit-appearance:none;width:22px;height:22px;flex:none;margin:1px 0 0;border:2px solid var(--ink);border-radius:2px;display:grid;place-items:center;cursor:pointer;background:transparent}
+.ck input::after{content:"";width:11px;height:6px;border:2.5px solid var(--accent-ink);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px) scale(0);transition:transform .12s}
+.ck input:checked{background:var(--accent);border-color:var(--accent)}
+.ck input:checked::after{transform:rotate(-45deg) translate(1px,-1px) scale(1)}
+.ck:has(input:checked) span{color:var(--mute)}
+
+/* choices */
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:20px 0 4px;max-width:640px}
+.opt{text-align:left;background:var(--frost);border:1px solid var(--frost-line);border-radius:22px;padding:18px 20px;cursor:pointer;display:grid;gap:4px;min-height:92px;-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);box-shadow:inset 0 1px 0 var(--frost-hi),0 10px 30px -18px #00000059;transition:transform .15s,box-shadow .15s,border-color .15s}
+.opt b{font:700 1.2rem var(--f-head);letter-spacing:.01em}
+.opt span{font-size:.92rem;color:var(--mute)}
+.opt:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 50%,var(--frost-line))}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--frost));box-shadow:inset 0 1px 0 var(--frost-hi),0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+
+/* more toggles */
+.more{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.more button{background:var(--frost);border:1px solid var(--frost-line);border-radius:999px;padding:7px 14px;cursor:pointer;font:600 .64rem var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--mute);box-shadow:inset 0 1px 0 var(--frost-hi)}
+.more button::before{content:"+ ";color:var(--accent)}
+.more button[aria-expanded="true"]{color:var(--ink);border-color:var(--accent)}
+.more button[aria-expanded="true"]::before{content:"− "}
+.drawer{border-radius:18px;margin:10px 0 0;padding:14px 16px;background:color-mix(in srgb,var(--fill) 80%,transparent);max-width:58ch;font-size:.95rem}
+.drawer p{margin:.3em 0}
+.calc{display:grid;gap:10px}
+.calc .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.9rem}
+.calc select{font:600 .85rem var(--f-mono);padding:7px 6px;border:0;border-bottom:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:0}
+.calc input{font:600 1rem var(--f-mono);width:6.5em;padding:7px 9px;border:0;border-bottom:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:0}
+.calc .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:2px}
+.calc .out div{background:var(--glass);padding:8px 10px}
+.calc .out b{display:block;font:600 1rem var(--f-mono)}
+.calc .out span{font:400 .6rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}
+.calc .msg{font-size:.88rem;font-weight:600;min-height:1.3em}
+
+/* home */
+.home h1.greet{font-size:clamp(2.1rem,5.2vw,3.8rem);line-height:1.04;margin:4px 0 18px;cursor:pointer;max-width:16ch}
+.home h1.greet:hover{color:var(--accent)}
+.home .kv{font:400 .7rem/1.9 var(--f-mono);color:var(--mute);letter-spacing:.03em;margin:0 0 6px}
+.home .kv b{color:var(--ink);font-weight:600}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.tool{display:inline-flex;align-items:center;gap:10px;height:46px;padding:0 18px 0 6px;border-radius:999px;cursor:pointer;font:700 .9rem var(--f-head);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);
+  border:1px solid var(--frost-line);background:var(--frost);-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);box-shadow:inset 0 1px 0 var(--frost-hi),0 8px 22px -14px #00000059;transition:transform .15s,border-color .15s}
+.tool:hover{transform:translateY(-1px);border-color:var(--accent)}
+.tool .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--frost-hi);color:var(--accent)}
+
+/* bottom nav */
+nav.nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid var(--rule);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:10px calc(10px + env(safe-area-inset-bottom,0px))}
+nav.nav .in{display:flex;align-items:center;gap:12px}
+.hint{flex:1;min-width:0;font:400 .66rem/1.4 var(--f-mono);color:var(--mute);text-align:right;letter-spacing:.02em;overflow:hidden;text-overflow:ellipsis}
+.hint.need{color:var(--warn)}
+.btn{height:52px;padding:0 10px 0 24px;border-radius:999px;font:700 1rem var(--f-head);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;gap:14px;
+  border:1px solid var(--frost-line);background:var(--frost);-webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);
+  box-shadow:inset 0 1px 0 var(--frost-hi),0 8px 24px -12px #0000004d;transition:transform .15s,box-shadow .15s,background .15s}
+.btn:hover:not([disabled]){transform:translateY(-1px);box-shadow:inset 0 1px 0 var(--frost-hi),0 12px 28px -12px #00000066}
+.btn:active:not([disabled]){transform:translateY(0) scale(.98)}
+.btn .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--frost-hi);flex:none}
+.btn.back{padding:0 22px 0 10px;color:var(--ink)}
+.btn.next{color:#fff;min-width:150px;justify-content:space-between;border-color:color-mix(in srgb,var(--accent) 60%,#fff 40%);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 88%,#fff 12%),color-mix(in srgb,var(--accent) 70%,transparent));
+  box-shadow:inset 0 1px 0 #ffffff70,0 10px 30px -10px color-mix(in srgb,var(--accent) 70%,transparent)}
+.btn.next .ic{background:#ffffff38}
+.btn[disabled]{opacity:.4;cursor:not-allowed;filter:saturate(.4)}
+
+/* side panels */
+.ov{position:fixed;inset:0;z-index:20;background:#0009;display:flex;justify-content:flex-end}
+.ov .pan{background:var(--bg);width:min(460px,100%);height:100%;overflow:auto;
+  padding:calc(20px + env(safe-area-inset-top,0px)) max(22px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) 22px}
+.ov h2{font:700 1.7rem var(--f-head);margin:0}
+.oh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.grp{font:600 .62rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:18px 0 4px}
+button.it{display:flex;gap:12px;width:100%;text-align:left;background:none;border:0;padding:8px 0;cursor:pointer;border-bottom:1px solid var(--rule)}
+button.it .n{font:600 .7rem var(--f-mono);color:var(--mute);width:2.4em;flex:none;padding-top:3px}
+button.it[disabled]{opacity:.4;cursor:not-allowed}
+button.it.cur{color:var(--accent);font-weight:600}
+button.it.cur .n{color:var(--accent)}
+.modesw{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;background:var(--fill)}
+.modesw button{background:var(--ink);color:var(--bg);border:0;padding:8px 12px;font:600 .8rem var(--f-head);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-radius:2px}
+dl.tr dt{font-weight:600;margin-top:16px}
+dl.tr dd{margin:3px 0 0;color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--bg);
+  padding:10px 16px;font:400 .72rem var(--f-mono);max-width:min(92vw,520px);text-align:center;border-radius:2px}
+
+/* drawings */
+svg text{font-family:var(--f-body)}
+svg .mono{font-family:var(--f-mono)}
+.dim{fill:#05080a;fill-opacity:.42}
+.edge{fill:none;stroke:#fff;stroke-width:1.6;stroke-opacity:.95}
+.halo{fill:none;stroke:var(--hl);stroke-width:10;stroke-opacity:.35;animation:breathe 2.2s ease-in-out infinite}
+.pin circle{fill:var(--hl)}
+.pin text{fill:var(--hl-ink);font:600 12px var(--f-mono);text-anchor:middle;dominant-baseline:central}
+@keyframes breathe{0%,100%{stroke-opacity:.15;stroke-width:6}50%{stroke-opacity:.5;stroke-width:12}}
+.bn circle{fill:var(--hl)}
+.bn text{fill:var(--hl-ink);font:600 13px var(--f-mono);text-anchor:middle;dominant-baseline:central}
+@keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.3}}
+@media (prefers-reduced-motion: reduce){.sheet>*,#art{animation:none!important}#art,.amb i,.stage::before{transform:none!important}.halo{animation:none}.prog i{transition:none}}
+
+@media (max-width: 900px){
+  main.step,main.step.fig{grid-template-columns:minmax(0,1fr);min-height:0}
+  .stage{padding:16px 12px 34px}
+  .stage svg{max-height:42vh}
+  .stage .cap{left:14px;bottom:10px}
+  .sheet{padding:22px max(16px,env(safe-area-inset-left,0px)) 20px}
+  main.fig .sheet{margin:-22px 0 0;box-shadow:0 -20px 40px -24px #00000066}
+  .stage{padding:16px 12px 44px}
+  main.nofig .sheet{margin:16px auto;width:calc(100% - 24px)}
+  main.nofig .sheet{padding-top:28px}
+  .num{font-size:3.4rem}
+  .mark span em{display:none}
+}
+@media (max-width: 520px){ .mark .full{display:none} .mark .short{display:inline} .tb{padding:0 8px} }
+@media (max-width: 420px){ .mark span{display:none} .btn.next{min-width:132px;margin-left:auto} .tb{padding:0 11px} .hint{display:none} #tbTheme{display:none} }
+</style>
+</head>
+<body>
+
+<div class="amb" aria-hidden="true"><i></i><i></i><i></i></div>
+<header class="top">
+  <div class="bar1 gut">
+    <button class="mark" id="mark" type="button" aria-label="AC Current Source V1 procedure">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="2" fill="var(--ink)"/><path id="mw" d="M5 15 C9 5,11 5,15 15 S21 25,25 15" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/></svg>
+      <span><b class="full">AC Current Source V1</b><b class="short">AC Source V1</b> <em>· Operating procedure</em></span>
+    </button>
+    <span class="count" id="count"></span>
+    <button class="tb" id="tbSteps" type="button">Steps</button>
+    <button class="tb" id="tbHelp" type="button">Help</button>
+    <button class="tb" id="tbTheme" type="button" aria-label="Toggle light or dark">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display:block"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
+  </div>
+  <div class="prog"><i id="pg"></i></div>
+</header>
+<main class="step" id="main"></main>
+
+<nav class="nav"><div class="in">
+  <button class="btn back" id="bBack" type="button"><span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back</button>
+  <div class="hint" id="hint"></div>
+  <button class="btn next" id="bNext" type="button"><span id="bNextT">Next</span><span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+</div></nav>
+
+<div class="ov" id="ovSteps" hidden><div class="pan" role="dialog" aria-label="Steps">
+  <div class="oh"><h2>Steps</h2><button class="tb" data-close type="button">Close</button></div>
+  <div id="list"></div>
+  <p style="margin-top:18px"><button class="tb" id="bReset" type="button" style="padding:0;color:var(--accent)">Start a new session</button></p>
+</div></div>
+
+<div class="ov" id="ovCalc" hidden><div class="pan" role="dialog" aria-label="Calculator">
+  <div class="oh"><h2>Calculator</h2><button class="tb" data-close type="button">Close</button></div>
+  <div class="grp">Amplitude for a target current</div><div id="calcA" class="drawer"></div>
+  <div class="grp">Field at the sensor</div><div id="calcB" class="drawer"></div>
+</div></div>
+<div class="ov" id="ovHelp" hidden><div class="pan" role="dialog" aria-label="Help">
+  <div class="oh"><h2>Troubleshooting</h2><button class="tb" data-close type="button">Close</button></div>
+  <div class="alert"><span class="tag">DANGER</span><div>Smoke, burning smell or sparks: press <b>E-STOP</b>, then switch the supply output off.</div></div>
+  <dl class="tr">
+  <dt>No output current, supply draw near zero</dt><dd>E-STOP is pressed. Twist it clockwise to release. Check supply On/Off is lit and generator Out1 is on.</dd>
+  <dt>Supply in CC, voltage dropping</dt><dd>5 A limit reached. Output off, check the wire loop for a short. If the loop is fine, report to the setup owner.</dd>
+  <dt>Supply shows OVP or a protection message</dt><dd>Press <kbd>Esc</kbd> or <kbd>Enter</kbd> to clear, confirm V-set = 40 V, then <kbd>On/Off</kbd>.</dd>
+  <dt>Thick or fuzzy scope trace</dt><dd>Check the probe uses the short ground spring. If it persists with the signal off, stop and report.</dd>
+  <dt>Current is half or double the expected value</dt><dd>Generator load setting: Utility → Output Setup → CH1Load must be High Z.</dd>
+  <dt>Amplitude jumps without input change</dt><dd>Reduce amplitude, output off, report.</dd>
+  <dt>DC shift in the sensor reading</dt><dd>Repeat the offset null step.</dd>
+  <dt>Lower current at high frequency</dt><dd>Expected. Loop inductance reduces current; shorten the loop or lower the frequency.</dd>
+  <dt>One area much hotter than the rest</dt><dd>Reduce amplitude, stop, report.</dd>
+  </dl>
+</div></div>
+
+<script>
+(function(){
+"use strict";
+const K_IPK=2.284, VPP_MAX=6.6, P_IDLE=10;
+
+/* ---------- small SVG helpers ---------- */
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function key(id,x,y,w,h,label,o={}){
+  const fill=o.fill||"var(--k)", tc=o.tc||"#222", fs=o.fs||12, rx=o.rx??5;
+  const lab = o.above ? `<text x="${x+w/2}" y="${y-5}" font-size="${o.afs||11}" text-anchor="middle" fill="${o.ac||'#333'}">${esc(o.above)}</text>` : "";
+  const t = label!=="" ? `<text x="${x+w/2}" y="${y+h/2}" font-size="${fs}" font-weight="600" text-anchor="middle" dominant-baseline="central" fill="${tc}">${esc(label)}</text>` : "";
+  return `<g class="k" data-k="${id}">${lab}<rect class="kb" x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${o.stroke||'#00000040'}" stroke-width="1.2"/>${t}</g>`;
+}
+function knob(id,cx,cy,r,fill,ring){
+  return `<g class="k" data-k="${id}"><circle class="kb" cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${ring}" stroke-width="2"/>
+  <circle cx="${cx}" cy="${cy}" r="${r*0.72}" fill="none" stroke="${ring}" stroke-width="1" stroke-dasharray="3 4"/>
+  <circle cx="${cx}" cy="${cy-r*0.55}" r="3" fill="${ring}"/></g>`;
+}
+function bnc(id,cx,cy,col){
+  return `<g class="k" data-k="${id}"><circle class="kb" cx="${cx}" cy="${cy}" r="17" fill="${col}" stroke="#7a6a2a" stroke-width="1.5"/>
+  <circle cx="${cx}" cy="${cy}" r="9" fill="#222"/><circle cx="${cx}" cy="${cy}" r="3" fill="#ddd"/></g>`;
+}
+
+/* ---------- Tektronix AFG1062 (drawn after the front panel) ---------- */
+function afg(s){
+  s=Object.assign({mode:"Sine",freqLbl:"Frequency",freq:"1.000 000 00 kHz",ampl:"1.000 Vpp",offset:"0 mV",load:"50 Ω",
+    bezel:["Freq/Period","StartPhase","Ampl/High","Offset/Low","·"],menu:null,edit:null,out:false},s||{});
+  const bz=s.bezel.map((b,i)=>`<text x="352" y="${86+i*38}" font-size="11.5" fill="#fff" text-anchor="end" font-weight="600">${esc(b)}</text>`).join("");
+  const screen = s.menu
+    ? `<text x="44" y="90" font-size="17" font-weight="700" fill="#fff">${esc(s.menu)}</text>
+       ${(s.menuLines||[]).map((l,i)=>`<text x="44" y="${122+i*26}" font-size="14" fill="#dfe8ff" class="mono">${esc(l)}</text>`).join("")}`
+    : `<rect x="40" y="64" width="30" height="24" rx="3" fill="#ffe14a"/><text x="55" y="76" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#222">CH1</text>
+       <text x="160" y="78" font-size="13" fill="#cfe0ff" text-anchor="middle">${esc(s.freqLbl)}</text>
+       <text x="165" y="104" font-size="20" font-weight="700" fill="#fff" text-anchor="middle" class="mono">${esc(s.freq)}</text>
+       <rect x="120" y="118" width="148" height="72" fill="#123a80" stroke="#7fa6ec" stroke-width="1"/>
+       <path d="M120 154 C145 112,170 112,194 154 S243 196,268 154" fill="none" stroke="#fff" stroke-width="2"/>
+       <text x="44" y="140" font-size="11" fill="#cfe0ff">Load</text>
+       <text x="44" y="156" font-size="13" font-weight="700" fill="#fff" class="mono">${esc(s.load)}</text>
+       <text x="44" y="176" font-size="11" fill="#cfe0ff">${s.out?"Output ON":"Output OFF"}</text>
+       <rect x="40" y="200" width="112" height="44" rx="3" fill="#2f66c6"/><text x="96" y="212" font-size="11" fill="#cfe0ff" text-anchor="middle">Amplitude</text>
+       <text x="96" y="231" font-size="15" font-weight="700" fill="#fff" text-anchor="middle" class="mono">${esc(s.ampl)}</text>
+       <rect x="158" y="200" width="112" height="44" rx="3" fill="#2f66c6"/><text x="214" y="212" font-size="11" fill="#cfe0ff" text-anchor="middle">Offset</text>
+       <text x="214" y="231" font-size="15" font-weight="700" fill="#fff" text-anchor="middle" class="mono">${esc(s.offset)}</text>`;
+  const edit = s.edit ? `<rect x="40" y="250" width="230" height="0" fill="none"/>` : "";
+  return `<svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tektronix AFG1062 front panel" style="--k:var(--afg-key)">
+  <rect x="2" y="2" width="756" height="336" rx="18" fill="var(--afg-case)" stroke="#a9a493" stroke-width="2"/>
+  <rect x="452" y="16" width="292" height="306" rx="10" fill="var(--afg-dark)"/>
+  <text x="34" y="38" font-size="15" font-weight="700" fill="#1a3a7a">Tektronix</text><text x="122" y="38" font-size="13" fill="#555">AFG1062</text>
+  <text x="250" y="38" font-size="10" fill="#555">60 MHz arbitrary/function generator</text>
+  <rect x="28" y="50" width="336" height="212" rx="6" fill="#222"/>
+  <rect x="34" y="56" width="324" height="200" rx="3" fill="var(--afg-scr)"/>
+  <rect x="290" y="56" width="68" height="200" fill="#163f88"/>
+  ${screen}${bz}${edit}
+  ${[0,1,2,3,4].map(i=>key("bz"+i,374,70+i*38,48,26,"")).join("")}
+  ${key("power",34,286,46,30,"⏻",{fill:"#5fae6a",tc:"#fff",fs:16,rx:10})}
+  ${[["sine","Sine","∿"],["square","Square","⊓"],["ramp","Ramp","⟋"],["pulse","Pulse","⎍"],["arb","Arb","≈"],["noise","Noise","⩘"]]
+     .map((w,i)=>key(w[0],98+i*56,290,46,26,w[2],{above:w[1],fs:15,fill:(s.mode===w[1]?"#cfe8a8":"var(--afg-key)")})).join("")}
+  <rect x="436" y="286" width="12" height="28" rx="2" fill="#555"/>
+  ${[["7","8","9"],["4","5","6"],["1","2","3"],["0",".","+/-"]].map((r,ri)=>r.map((c,ci)=>key("n"+(c==="."?"dot":c==="+/-"?"pm":c),470+ci*46,58+ri*36,38,26,c,{fs:13})).join("")).join("")}
+  <text x="640" y="34" font-size="10" fill="#333" text-anchor="middle">Push for Manual Trigger</text>
+  ${knob("knob",640,78,27,"#f7f6f2","#8e8a7c")}
+  ${key("left",610,122,28,22,"◀",{fs:11})}${key("right",644,122,28,22,"▶",{fs:11})}
+  ${key("interch",692,58,48,26,"Inter CH",{fs:10})}${key("utility",692,98,48,26,"Utility",{fs:11})}${key("help",692,138,48,26,"Help",{fs:11})}
+  ${key("ch12",470,206,46,24,"Ch1/2",{fs:11})}${key("both",470,240,46,24,"Both",{fs:11})}${key("mod",470,274,46,24,"Mod",{fs:11})}
+  ${key("out1",558,196,50,22,"On/Off",{fill:s.out?"#ffd84a":"#efe2a0",fs:11,above:"Out1"})}
+  ${bnc("bnc1",583,262,"#d9b23a")}
+  ${key("out2",652,196,50,22,"On/Off",{fill:"#a9cdf3",fs:11,above:"Out2"})}
+  ${bnc("bnc2",677,262,"#c9c9c9")}
+  </svg>`;
+}
+
+/* ---------- ITECH IT-M3900C (1U layout, schematic) ---------- */
+function itech(s){
+  s=Object.assign({v:"0.000",a:"0.000",w:"0.0",mode:"CV",out:false,line:null,flags:""},s||{});
+  const K={fill:"var(--it-key)",tc:"#f1f1f1",stroke:"#00000080"};
+  const big = s.line
+    ? `<text x="110" y="100" font-size="26" class="mono" fill="var(--it-txt)">${esc(s.line)}</text>
+       ${s.line2?`<text x="110" y="140" font-size="17" class="mono" fill="var(--it-txt)" opacity=".85">${esc(s.line2)}</text>`:""}`
+    : `<text x="110" y="98" font-size="34" class="mono" fill="var(--it-txt)">${esc(s.v)} V</text>
+       <text x="110" y="140" font-size="22" class="mono" fill="var(--it-txt)">${esc(s.a)} A</text>
+       <text x="300" y="140" font-size="22" class="mono" fill="var(--it-txt)">${esc(s.w)} W</text>`;
+  return `<svg viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ITECH IT-M3900C front panel">
+  <rect x="2" y="2" width="896" height="226" rx="10" fill="var(--it-case)" stroke="#15181b" stroke-width="2"/>
+  <text x="26" y="30" font-size="15" font-weight="700" fill="#f2f2f2">ITECH</text><text x="86" y="30" font-size="12" fill="#c7cdd2">IT-M3900C · DC power supply · 80 V / 80 A</text>
+  ${key("power",22,160,48,42,"",{fill:"#1d2124",stroke:"#999"})}<text x="46" y="153" font-size="11" fill="#d9dde0" text-anchor="middle">Power</text>
+  <text x="46" y="186" font-size="12" fill="#ddd" text-anchor="middle">I / O</text>
+  <rect x="90" y="44" width="360" height="132" rx="6" fill="var(--it-vfd)" stroke="#000" stroke-width="2"/>
+  ${big}
+  <text x="110" y="166" font-size="12" class="mono" fill="var(--it-txt)" opacity=".8">${esc(s.mode)}  ${s.out?"ON":"OFF"}  ${esc(s.flags)}</text>
+  ${[["shift","Shift"],["vset","V-set"],["iset","I-set"],["pset","P-set"],["protect","Protect"]].map((k,i)=>key(k[0],476+i*56,46,50,28,k[1],Object.assign({fs:11},K,k[0]==="shift"?{fill:"#2f6fb3"}:{}))).join("")}
+  ${[["7","8","9","dot"],["4","5","6","pm"],["1","2","3","0"]].map((r,ri)=>r.map((c,ci)=>key("n"+c,476+ci*44,90+ri*36,38,28,c==="dot"?".":c==="pm"?"+/-":c,Object.assign({fs:13},K))).join("")).join("")}
+  ${key("recall",656,90,54,28,"Recall",Object.assign({fs:11},K))}
+  ${key("esc",656,126,54,28,"Esc",Object.assign({fs:11},K))}
+  ${key("enter",656,162,54,28,"Enter",Object.assign({fs:11},K))}
+  ${key("onoff",722,90,58,100,"On/Off",{fill:s.out?"#ff9b2f":"#5a6168",tc:"#fff",fs:13,stroke:"#00000080"})}
+  ${knob("knob",838,92,34,"#596067","#b9c0c6")}
+  ${key("left",800,150,32,26,"◀",Object.assign({fs:11},K))}${key("right",842,150,32,26,"▶",Object.assign({fs:11},K))}
+  <text x="450" y="216" font-size="11" fill="#aab2b8" text-anchor="middle">Output and sense terminals are on the rear panel · key positions drawn schematically, key names as in the ITECH manual</text>
+  </svg>`;
+}
+
+/* ---------- Keysight DSOX3054T (schematic) ---------- */
+function scope(s){
+  s=Object.assign({trace:"none",amp:0.4,meas:[],note:""},s||{});
+  let tr="";
+  const cx=30, cw=420, cy=180;
+  if(s.trace==="flat") tr=`<path d="M${cx} ${cy} H${cx+cw}" stroke="#ffd400" stroke-width="2.5" fill="none"/>`;
+  if(s.trace==="sine"){
+    let d=""; for(let i=0;i<=200;i++){const x=cx+i*cw/200, y=cy-s.amp*110*Math.sin(i/200*Math.PI*6); d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" ";}
+    tr=`<path d="${d}" stroke="#ffd400" stroke-width="2.5" fill="none"/>`;
+  }
+  let grid=""; for(let i=1;i<10;i++) grid+=`<line x1="${cx+i*42}" y1="54" x2="${cx+i*42}" y2="306" stroke="#2b3238" stroke-width="1"/>`;
+  for(let j=1;j<6;j++) grid+=`<line x1="${cx}" y1="${54+j*42}" x2="${cx+cw}" y2="${54+j*42}" stroke="#2b3238" stroke-width="1"/>`;
+  const meas=s.meas.map((m,i)=>`<text x="${cx+8}" y="${294-i*20}" font-size="14" class="mono" fill="#ffd400">${esc(m)}</text>`).join("");
+  const K={fill:"var(--sc-key)",tc:"#222"};
+  return `<svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Keysight DSOX3054T oscilloscope front panel">
+  <rect x="2" y="2" width="756" height="356" rx="14" fill="var(--sc-case)" stroke="#9aa3ab" stroke-width="2"/>
+  <text x="24" y="34" font-size="14" font-weight="700" fill="#c8102e">KEYSIGHT</text><text x="112" y="34" font-size="12" fill="#444">InfiniiVision DSOX3054T · 500 MHz</text>
+  <rect x="22" y="46" width="436" height="268" rx="4" fill="var(--sc-scr)"/>
+  ${grid}<rect x="${cx}" y="54" width="${cw}" height="252" fill="none" stroke="#56606a"/>
+  <text x="${cx+6}" y="70" font-size="13" class="mono" fill="#ffd400">1</text>${s.scale?`<text x="${cx+cw-8}" y="70" font-size="13" class="mono" fill="#cfd6dc" text-anchor="end">${esc(s.scale)}</text>`:""}
+  ${tr}${meas}
+  ${key("power",26,322,46,28,"⏻",{fill:"#d6dadf",fs:15})}${key("autoscale",486,48,72,30,"Auto Scale",Object.assign({fs:11},K))}${key("runstop",570,48,72,30,"Run/Stop",{fs:11,fill:"#7bd88f"})}${key("single",654,48,72,30,"Single",Object.assign({fs:11},K))}
+  ${key("meas",486,94,72,30,"Meas",Object.assign({fs:11},K))}${key("cursors",570,94,72,30,"Cursors",Object.assign({fs:11},K))}${key("default",654,94,72,30,"Default Setup",Object.assign({fs:9},K))}
+  <text x="560" y="150" font-size="11" fill="#444" text-anchor="middle">Horizontal</text>${knob("hknob",560,180,22,"#d6dadf","#6d757d")}
+  <text x="520" y="232" font-size="11" fill="#444" text-anchor="middle">Vertical</text>
+  ${knob("vknob1",520,256,20,"#ffe25a","#8b7a10")}
+  ${key("ch1",500,284,40,24,"1",{fill:"#ffd400",fs:13})}${key("ch2",550,284,40,24,"2",{fill:"#7ee36b",fs:13})}${key("ch3",600,284,40,24,"3",{fill:"#5aa9ff",fs:13})}${key("ch4",650,284,40,24,"4",{fill:"#ff6fb3",fs:13})}
+  ${bnc("ch1in",520,330,"#c9c9c9")}<text x="545" y="334" font-size="10" fill="#444">CH1 in</text>
+  </svg>`;
+}
+
+
+
+
+
+/* ---------- E-stop (stage colours) ---------- */
+function estop(){
+  return `<svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Emergency stop button">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#e8ebeb"/></marker></defs>
+  <rect x="80" y="40" width="260" height="230" rx="10" fill="#14181a"/>
+  <circle cx="210" cy="150" r="96" fill="#ffc400"/>
+  <path id="ering" d="M210 150 m-84 0 a84 84 0 1 1 168 0 a84 84 0 1 1 -168 0" fill="none"/>
+  <text font-size="13" font-weight="700" fill="#1a1400" letter-spacing="3"><textPath href="#ering" startOffset="2%">EMERGENCY STOP · EMERGENCY STOP ·</textPath></text>
+  <g class="k" data-k="estop"><g id="cap" style="cursor:pointer;transition:transform .15s">
+    <ellipse cx="210" cy="172" rx="52" ry="16" fill="#7a0f0f"/>
+    <rect class="kb" x="158" y="128" width="104" height="44" rx="10" fill="#c81d1d" stroke="#7a0f0f" stroke-width="2"/>
+    <ellipse cx="210" cy="128" rx="52" ry="18" fill="#e53935"/>
+    <ellipse cx="198" cy="123" rx="20" ry="6" fill="#ff8a80" opacity=".7"/></g></g>
+  <path d="M300 92 a96 96 0 0 1 22 48" fill="none" stroke="#e8ebeb" stroke-width="3" marker-end="url(#ah)"/>
+  <text x="350" y="124" font-size="12" fill="#e8ebeb" class="mono">TWIST</text><text x="350" y="140" font-size="12" fill="#e8ebeb" class="mono">= RELEASE</text>
+  <text x="8" y="40" font-size="12" fill="#e8ebeb" class="mono">PRESS</text><text x="8" y="56" font-size="12" fill="#e8ebeb" class="mono">= STOP</text>
+  <path d="M40 66 L150 124" stroke="#e8ebeb" stroke-width="3" marker-end="url(#ah)"/>
+  </svg>`;
+}
+
+/* ---------- wiring (stage colours, source is a black box) ---------- */
+function wiring(){
+  const T="#e8ebeb", M="#98a3a8", B="#353d41";
+  const blk=(id,x,y,w,h,t1,t2)=>`<g class="k" data-k="${id}"><rect class="kb" x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${B}"/>
+    <text x="${x+14}" y="${y+28}" font-size="16" font-weight="600" fill="${T}">${t1}</text>
+    <text x="${x+14}" y="${y+48}" font-size="11" fill="${M}" class="mono">${t2}</text></g>`;
+  const port=(id,x,y,lab,end)=>`<g class="k" data-k="${id}"><rect class="kb" x="${x}" y="${y}" width="24" height="24" rx="2" fill="#ffc400"/></g>
+    <text x="${end?x-8:x+32}" y="${y+16}" font-size="10" fill="${T}" class="mono" text-anchor="${end?'end':'start'}">${lab}</text>`;
+  return `<svg viewBox="0 0 900 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bench wiring">
+  ${blk("supply",14,30,200,70,"DC supply","REAR · 40 V")}
+  ${blk("afg",14,256,200,70,"Signal generator","OUT1 · BNC")}
+  <g class="k" data-k="cdc"><path class="kb" d="M214 56 H262 V152 H312" fill="none" stroke="#e5484d" stroke-width="5"/>
+    <path d="M214 76 H248 V170 H312" fill="none" stroke="#0b0d0e" stroke-width="5"/></g>
+  <g class="k" data-k="csig"><path class="kb" d="M214 292 H312" fill="none" stroke="#0b0d0e" stroke-width="6"/></g>
+  <rect x="312" y="110" width="250" height="230" rx="4" fill="#0f1214"/>
+  <text x="437" y="232" font-size="20" font-weight="700" fill="${T}" text-anchor="middle" letter-spacing="2" style="font-family:var(--f-head)">AC SOURCE</text>
+  ${port("dcin",300,149,"DC IN")}
+  ${port("sigin",300,280,"SIG IN")}
+  ${port("out",550,201,"OUT",true)}
+  <g class="k" data-k="estop"><circle class="kb" cx="437" cy="152" r="19" fill="#ffc400"/><circle cx="437" cy="152" r="11" fill="#d92d20"/></g>
+  <text x="464" y="156" font-size="10" fill="${T}" class="mono">E-STOP</text>
+  <g class="k" data-k="wire"><path class="kb" d="M574 213 H872 V376 H808" fill="none" stroke="#d07a3a" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M660 213 l16 -8 v16z" fill="#d07a3a"/></g>
+  <text x="600" y="196" font-size="11" fill="${M}" class="mono">WIRE / BUS BAR UNDER TEST</text>
+  <g class="k" data-k="sensor"><rect class="kb" x="762" y="191" width="50" height="44" rx="3" fill="#e8ebeb"/>
+    <text x="787" y="217" font-size="11" font-weight="600" fill="#101416" text-anchor="middle" class="mono">HALL</text></g>
+  <g class="k" data-k="rload"><rect class="kb" x="712" y="363" width="96" height="26" rx="2" fill="#8b5a2b"/>
+    <text x="760" y="380" font-size="12" font-weight="600" fill="#fff" text-anchor="middle" class="mono">0.2 Ω</text></g>
+  <path d="M712 376 H600 V236 H574" fill="none" stroke="#d07a3a" stroke-width="8" stroke-linejoin="round"/>
+  <g class="k" data-k="probe"><path class="kb" d="M808 389 V414 H520" fill="none" stroke="#e2b400" stroke-width="3"/>
+    <path d="M712 389 V406" stroke="#e8ebeb" stroke-width="3"/><circle cx="808" cy="389" r="5" fill="#e2b400"/><circle cx="712" cy="389" r="5" fill="#e8ebeb"/></g>
+  ${blk("scope",318,368,200,60,"Scope CH1","I = V / 0.2 Ω")}
+  </svg>`;
+}
+
+/* ---------- content ---------- */
+const AMP=[[1.8,1.64,4.1,40],[3.0,2.74,6.9,61],[4.0,3.65,9.1,78],[5.0,4.57,11.4,95],[6.0,5.48,13.7,113],[6.6,6.03,15.1,123]];
+const seq=(...k)=>`<div class="seq">${k.map(x=>x==="→"?`<span class="ar">→</span>`:`<kbd>${x}</kbd>`).join("")}</div>`;
+const alert=(tag,html)=>`<div class="alert"><span class="tag">${tag}</span><div>${html}</div></div>`;
+const ampTable=`<div class="tw"><table><thead><tr><th>Gen</th><th class="r">Scope</th><th class="r">I pk</th><th class="r">I rms</th><th class="r">Supply</th></tr></thead><tbody>
+  ${AMP.map(r=>`<tr class="${r[0]===6.6?'lim':''}"><td class="r" style="text-align:left;padding-left:0">${r[0].toFixed(1)} Vpp</td><td class="r">${r[1].toFixed(2)} V</td><td class="r">${r[2].toFixed(1)} A</td><td class="r">${(r[2]/Math.SQRT2).toFixed(1)} A</td><td class="r">${r[3]} W</td></tr>`).join("")}
+  </tbody></table></div><p style="font-size:.8rem;color:var(--mute)">Measured at 10 kHz.</p>`;
+
+const S=[
+{id:"home", sec:"Session", home:true, title:"AC Current Source V1",
+  body:`<p class="kv"><b>OUTPUT</b> 10–50 kHz sine · up to 15 A peak<br><b>SUPPLY</b> ITECH IT-M3900C · <b>GENERATOR</b> Tektronix AFG1062 · <b>SCOPE</b> Keysight DSOX3054T</p>`},
+
+/* ===================== RUN FLOW ===================== */
+{id:"intro", only:"beg", sec:"Before you start", title:"Overview",
+  body:`<ul><li><b>Inputs:</b> 40 V DC from the supply, sine from the generator.</li><li><b>Output:</b> up to <span class="v">15 A pk</span>, <span class="v">10–50 kHz</span>, through the wire under test.</li>
+  <li><b>Reference:</b> scope across the <span class="v">0.2 Ω</span> in the loop.</li></ul>
+  ${alert("RULE","The generator sits at <b>0.700 Vpp</b> whenever any output is switched on or off. A sudden step into the loop inductance is what the source dislikes most.")}
+  ${alert("WARNING","Internal parts reach ~90 °C at full current. Do not touch the source while running. Never short OUT.")}`,
+  checks:["I have read the rule and the warning."]},
+{id:"remind", only:"exp", sec:"Before you start", title:"Operating limits",
+  body:`<div class="tw"><table><tbody>
+  <tr><td>Frequency</td><td class="r">10–50 kHz</td></tr><tr><td>Supply</td><td class="r">40 V · I+ 5 A · OVP 45 V</td></tr><tr><td>Idle draw</td><td class="r">≈ 0.25 A · 10 W</td></tr>
+  <tr><td>Generator</td><td class="r">Sine · High Z</td></tr><tr><td>Switching amplitude</td><td class="r">0.700 Vpp</td></tr><tr><td>Max amplitude</td><td class="r">6.6 Vpp → 15 A pk</td></tr>
+  <tr><td>Current</td><td class="r">I pk = Pk-Pk / 0.4</td></tr><tr><td>Temperature stop</td><td class="r">85 °C</td></tr></tbody></table></div>`,
+  checks:["Limits noted."]},
+{id:"estop", only:"beg", sec:"Before you start", title:"Emergency stop", fig:"estop", hl:["estop"],
+  body:`<ul><li><b>Press</b> to stop the source output immediately.</li><li><b>Twist clockwise</b> to release.</li><li>Normal state: <b>released</b>. Use only in an emergency.</li></ul>`,
+  checks:["E-STOP located and released."]},
+
+{id:"off", only:"beg", sec:"Wiring", title:"Outputs off", fig:"wiring", hl:["supply","afg"],
+  body:`<p>Supply <kbd>On/Off</kbd> dark. Generator Out1 light dark.</p>`,
+  checks:["Supply output off.","Generator Out1 off."]},
+{id:"loop", only:"beg", sec:"Wiring", title:"Connect the current loop", fig:"wiring", hl:["out","wire","rload"],
+  body:`<p><b>OUT</b> → wire under test → <b>0.2 Ω</b> → OUT return. Tight joints, short return path.</p>`,
+  more:[["Why",`<p>A loose joint at 15 A becomes a small heater, and its resistance drifts. A large loop adds inductance, which lowers the current at 50 kHz. Physics does not negotiate.</p>`]],
+  checks:["Loop closed through the 0.2 Ω, joints tight."]},
+{id:"sensor", only:"beg", sec:"Wiring", title:"Mount the Hall sensor", fig:"wiring", hl:["sensor"],
+  body:`<p>On the straight section, away from bends and the return conductor. Clamp it in place.</p>`},
+{id:"probe", only:"beg", sec:"Wiring", title:"Probe across the 0.2 Ω", fig:"wiring", hl:["probe","rload","scope"],
+  body:`<p>10:1 probe on <b>CH1</b>. Tip on the OUT side, ground on the other end. Use the short ground spring.</p>`,
+  more:[["Why the spring",`<p>The long ground clip picks up 20–80 MHz ringing that isn't really there. It cost a week of debugging once; no need to repeat it.</p>`]],
+  checks:["CH1 across 0.2 Ω with the short ground spring."]},
+{id:"sig", only:"beg", sec:"Wiring", title:"Generator to SIG IN", fig:"wiring", hl:["afg","csig","sigin"],
+  body:`<p>BNC from generator <b>Out1</b> to <b>SIG IN</b>. Route it away from the current loop.</p>`},
+{id:"dc", only:"beg", sec:"Wiring", title:"Supply to DC IN", fig:"wiring", hl:["supply","cdc","dcin"],
+  body:`<p>Rear terminals to <b>DC IN</b>: red to +, black to −. Wire rated ≥ 5 A.</p>${alert("CAUTION","Reverse polarity damages the source.")}`,
+  checks:["Polarity verified.","Supply output still off."]},
+{id:"wiring", only:"exp", sec:"Wiring", title:"Wiring check", fig:"wiring", hl:["dcin","sigin","wire","sensor","rload","probe","estop"],
+  body:``,
+  checks:["Supply and generator outputs off.","OUT → wire → 0.2 Ω → OUT, joints tight.","Hall sensor clamped.","Scope CH1 across 0.2 Ω, short ground spring.","Out1 → SIG IN.","Supply → DC IN, polarity verified.","E-STOP released."]},
+
+/* --- 1. supply --- */
+{id:"iton", sec:"Supply", title:"Power on the supply", fig:"itech", hl:["power"], scr:{},
+  body:`${seq("Power")}<p>Initialises in ~30 s. Expect CV mode, output OFF.</p>`},
+{id:"itcheck", choice:"it", sec:"Supply", title:"Check supply settings", fig:"itech", hl:["vset","iset","protect","esc"], scr:{line:"Vset = 40.000 V",line2:"I+ = 5.000 A"},
+  body:`<div class="tw"><table><tbody>
+  <tr><td><kbd>V-set</kbd></td><td class="r">40.000 V</td></tr><tr><td><kbd>I-set</kbd></td><td class="r">I+ 5.000 A</td></tr>
+  <tr><td><kbd>Protect</kbd></td><td class="r">OVP On · 45 V</td></tr><tr><td><kbd>Esc</kbd></td><td class="r">exit, no changes</td></tr>
+  <tr><td><kbd>On/Off</kbd></td><td class="r">dark (output off)</td></tr></tbody></table></div>
+  <p style="color:var(--mute);font-size:.9rem">2U model: Protect = <kbd>Shift</kbd>+<kbd>Recall</kbd>.</p>`,
+  options:[["match","Matches, output off","Continue to the generator."],["change","Different","Show the supply setup steps."]]},
+{id:"vset", group:"it", sec:"Supply setup", title:"Voltage 40 V", fig:"itech", hl:["vset","n4","n0","enter"], scr:{line:"Vset = 40.000 V",line2:"CV priority"},
+  body:`${seq("V-set","→","4","0","→","Enter")}`,
+  more:[["Why 40 V",`<p>The source accepts 36–75 V and starts above ~34 V. 40 V leaves margin for cable drop. 42 V also works, but that number is already taken.</p>`]],
+  checks:["Setpoint 40.000 V."]},
+{id:"iset", group:"it", sec:"Supply setup", title:"Current limit 5 A", fig:"itech", hl:["iset","n5","enter"], scr:{line:"I+ = 5.000 A",line2:"press I-set again: I− (leave)"},
+  body:`${seq("I-set","→","5","→","Enter")}<p>Sets I+. Leave I− unchanged.</p>`,
+  more:[["Why 5 A",`<p>Full output draws ~3.1 A at 40 V. 5 A covers start-up inrush and limits fault energy. A seatbelt that has never been needed. Keep it that way.</p>`]],
+  checks:["Limit 5.000 A."]},
+{id:"ovp", group:"it", sec:"Supply setup", title:"OVP 45 V", fig:"itech", hl:["protect","knob","enter","n4","n5","esc"], scr:{line:"1. OVP  On",line2:"Level 45.000 V"},
+  body:`<ol><li><kbd>Protect</kbd> (2U: <kbd>Shift</kbd>+<kbd>Recall</kbd>)</li><li>Knob → <b>1. OVP</b> → <kbd>Enter</kbd> → <b>On</b> → <kbd>Enter</kbd></li><li><kbd>4</kbd><kbd>5</kbd> <kbd>Enter</kbd>, delay <kbd>Enter</kbd></li><li><kbd>Esc</kbd></li></ol>`,
+  more:[["Why",`<p>Protects the source (75 V max) from a mistyped setpoint. Fat-finger insurance: 400 V is only one extra zero away.</p>`]],
+  checks:["OVP on at 45 V, output still off."]},
+
+/* --- 2. generator --- */
+{id:"afgon", sec:"Generator", title:"Power on the generator", fig:"afg", hl:["power"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z"},
+  body:`${seq("⏻")}<p>Wait for the main screen. Leave Out1 off.</p>`},
+{id:"afgcheck", choice:"afg", sec:"Generator", title:"Check generator settings", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",offset:"0 mV",load:"High Z"},
+  body:`<div class="tw"><table><tbody>
+  <tr><td>Waveform</td><td class="r">Sine</td></tr><tr><td>Frequency</td><td class="r">10.000 kHz</td></tr><tr><td>Amplitude</td><td class="r">0.700 Vpp</td></tr>
+  <tr><td>Offset</td><td class="r">0 mV / noted value</td></tr><tr><td>Load</td><td class="r">High Z</td></tr><tr><td>Out1</td><td class="r">Off</td></tr></tbody></table></div>`,
+  more:[["Resets every power-on?",`<p>If it always starts at 1 kHz, 1 Vpp, 50 Ω: Utility → System → Power On → <b>Last</b>.</p>`]],
+  options:[["match","Matches, output off","Continue to the scope."],["change","Different","Show the generator setup steps."]]},
+{id:"freq1", group:"afg", sec:"Generator setup", title:"Sine, 10 kHz", fig:"afg", hl:["sine","bz0","n1","n0"], scr:{freq:"1.000 000 00 kHz",ampl:"1.000 Vpp"},
+  body:`${seq("Sine","→","Freq/Period","→","1","0")}`},
+{id:"freq2", group:"afg", sec:"Generator setup", title:"Unit: kHz", fig:"afg", hl:["bz1"], scr:{freq:"10.000 000 00 kHz",bezel:["MHz","kHz","Hz","mHz","Cancel"],ampl:"1.000 Vpp"},
+  body:`${seq("kHz")}<p>Screen: <span class="v">10.000 000 00 kHz</span></p>`},
+{id:"util", group:"afg", sec:"Generator setup", title:"Output setup menu", fig:"afg", hl:["utility","bz1"], scr:{menu:"Utility",menuLines:["Press the side key","labelled Output Setup"],bezel:["·","Output Setup","·","·","·"]},
+  body:`${seq("Utility","→","Output Setup")}<p style="color:var(--mute);font-size:.9rem">Select the side key by its label; position can vary with firmware.</p>`},
+{id:"load", group:"afg", sec:"Generator setup", title:"Load: High Z", fig:"afg", hl:["bz0"], scr:{menu:"Output Setup",menuLines:["CH1 Load :  High Z","CH2 Load :  50 Ω"],bezel:["CH1Load","CH2Load","·","·","Return"]},
+  body:`${seq("CH1Load")}<p>Press until it reads <span class="v">High Z</span>.</p>`,
+  more:[["Why",`<p>The source input is 1 kΩ. With the 50 Ω setting the real amplitude is twice the displayed value. The generator isn't lying; it just assumes you have a 50 Ω load. You don't.</p>`]],
+  checks:["Main screen shows Load: High Z."]},
+{id:"amp1", group:"afg", sec:"Generator setup", title:"Amplitude 0.7", fig:"afg", hl:["bz2","n0","ndot","n7"], scr:{freq:"10.000 000 00 kHz",ampl:"1.000 Vpp",load:"High Z"},
+  body:`${seq("Ampl/High","→","0",".","7")}`},
+{id:"amp2", group:"afg", sec:"Generator setup", title:"Unit: Vpp", fig:"afg", hl:["bz0"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",offset:"0 mV",load:"High Z",bezel:["Vpp","mVpp","Vrms","mVrms","Cancel"]},
+  body:`${seq("Vpp")}<p>Confirm offset <span class="v">0 mV</span>. If not: <kbd>Offset/Low</kbd> <kbd>0</kbd> <kbd>mV</kbd>.</p>`,
+  checks:["0.700 Vpp, 0 mV, Out1 off."]},
+
+/* --- 3. scope --- */
+{id:"dsoon", sec:"Oscilloscope", title:"Power on the scope", fig:"scope", hl:["power"], scr:{trace:"none"},
+  body:`${seq("⏻")}<p>Wait for the graticule. Probe stays on CH1 across the 0.2 Ω.</p>`},
+{id:"dsoscale", sec:"Oscilloscope", title:"Set scales", fig:"scope", hl:["ch1","vknob1","hknob","meas"], scr:{trace:"none",scale:"200 mV/div   20 µs/div"},
+  body:`<div class="tw"><table><tbody>
+  <tr><td>CH1</td><td class="r">DC · 10:1 · 200 mV/div</td></tr><tr><td>Horizontal</td><td class="r">20 µs/div (2 cycles at 10 kHz)</td></tr>
+  <tr><td><kbd>Meas</kbd></td><td class="r">Peak-Peak + Average, CH1</td></tr></tbody></table></div>
+  <p style="color:var(--mute);font-size:.9rem">Go to 1 V/div once the generator is above ~3 Vpp. At 50 kHz, 5 µs/div.</p>`,
+  checks:["Scales and measurements set."]},
+
+/* --- 4. power up --- */
+{id:"outon", sec:"Power-up", title:"Supply output on", fig:"itech", hl:["onoff"], scr:{v:"40.000",a:"0.250",w:"10.0",out:true},
+  body:`${seq("On/Off")}<p>Expected idle: <span class="v">40 V · 0.25 A · 10 W</span>, fans running.</p>
+  ${alert("STOP IF","Current &gt; 0.6 A, CC shown, or any smell: E-STOP, then <kbd>On/Off</kbd>.")}`,
+  checks:["Idle ≈ 10 W, fans running."]},
+{id:"scope", sec:"Power-up", title:"Idle trace", fig:"scope", hl:["meas"], scr:{trace:"flat",scale:"200 mV/div   20 µs/div",meas:["Pk-Pk(1): 14 mV","Avg(1): 2 mV"]},
+  body:`<p>Flat line, slightly noisier than with the supply off. That is normal.</p><p>Thick fuzz or a visible waveform with no input: switch the supply output off and open <b>Help</b>.</p>`,
+  checks:["Flat line, only a little noise."]},
+
+/* --- 5. run --- */
+{id:"genamp", sec:"Run", title:"Confirm 0.7 Vpp", fig:"afg", hl:["bz2"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z"},
+  body:`<p>Amplitude must read <span class="v">0.700 Vpp</span> before Out1 goes on. If not: <kbd>Ampl/High</kbd> <kbd>0</kbd><kbd>.</kbd><kbd>7</kbd> <kbd>Vpp</kbd>.</p>`,
+  checks:["Amplitude is 0.700 Vpp."]},
+{id:"genon", sec:"Run", title:"Generator output on", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z",out:true},
+  body:`${seq("Out1 On/Off")}<p>Scope: <span class="v">≈ 0.64 Vpp</span>, a clean sine. That is about <span class="v">1.6 A pk</span>.</p>`,
+  checks:["Clean sine on the scope."]},
+{id:"offset", sec:"Run", title:"Null DC offset", fig:"afg", hl:["bz3","knob","left","right"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",offset:"−xx mV",load:"High Z",out:true},
+  body:`<p>Target: <span class="v">Avg(1) within ±5 mV</span></p>${seq("Offset/Low","→","Knob","◀ ▶")}`,
+  more:[["Why",`<p>±5 mV over 0.2 Ω is ±25 mA DC in the wire, which shows up as a sensor offset. The generator stores the value, so tomorrow this takes five seconds.</p>`]],
+  checks:["Avg(1) within ±5 mV."]},
+{id:"freq", sec:"Run", title:"Set test frequency", fig:"afg", hl:["bz0","knob"], scr:{freq:"50.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z",out:true},
+  body:`${seq("Freq/Period","→","value","→","kHz")}<p>Range <span class="v">10–50 kHz</span>. Adjust the scope time base to match.</p>`,
+  more:[["Note",`<p>Current falls with frequency for the same amplitude: 0.4 µH of loop is already 0.13 Ω at 50 kHz, comparable to the 0.2 Ω. Read current from the scope; the table is a starting point, not a promise.</p>`]]},
+{id:"amp", sec:"Run", title:"Raise amplitude gradually", fig:"afg", hl:["bz2","knob"], scr:{freq:"10.000 000 00 kHz",ampl:"4.000 Vpp",load:"High Z",out:true},
+  body:`${seq("Ampl/High","→","Knob")}<p>Steps of ~0.5 Vpp. Watch the scope and the supply after each.</p><p><b>Limit: <span class="v">6.6 Vpp</span></b></p>`,
+  more:[["Amplitude for a target current","@amp"],["Amplitude table",ampTable]],
+  checks:[`Amplitude will not exceed ${VPP_MAX} Vpp.`]},
+{id:"temp", sec:"Run", title:"Temperature",
+  body:`<ul><li>Above 5 Vpp: short runs, check the hotspot every minute.</li><li>Stop at <span class="v">85 °C</span>: amplitude back to 0.7 Vpp, let the fans cool it.</li><li>Keep fan inlets clear.</li></ul>`,
+  more:[["Test data",`<p>Hotspot reached 90 °C at 6.2 Vpp and 92 °C at 6.4 Vpp. Enough for tea, not recommended.</p>`]],
+  checks:["Thermometer ready, stop at 85 °C."]},
+{id:"measure", sec:"Run", title:"Record the measurement", fig:"scope", hl:["meas"], scr:{trace:"sine",amp:0.85,scale:"1 V/div   20 µs/div",meas:["Pk-Pk(1): 4.57 V","Avg(1): 1 mV"]},
+  body:`<p><span class="v">I pk = Pk-Pk / 0.4</span>  ·  <span class="v">I rms = I pk / 1.414</span></p><p>Log amplitude, frequency, scope Pk-Pk and sensor output together.</p>`,
+  more:[["Amplitude for a target current","@amp"],["Field at sensor","@field"]]},
+{id:"running", sec:"Run", runend:true, title:"Running",
+  body:`<p>Take as many points as you need. Two rules while you work:</p>
+  <ul><li>Before switching <b>any</b> output off or on, bring the generator back to <span class="v">0.700 Vpp</span>.</li><li>Stay under <span class="v">6.6 Vpp</span> and <span class="v">85 °C</span>.</li></ul>
+  <p>When you are done, use <b>Shut down</b> on the home page.</p>`},
+
+/* ===================== SHUTDOWN FLOW ===================== */
+{id:"sd1", flow:"shut", sec:"Shutdown", title:"Generator to 0.7 Vpp", fig:"afg", hl:["bz2","knob"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z",out:true},
+  body:`${seq("Ampl/High","→","0",".","7","→","Vpp")}<p>Wind the current down before anything is switched.</p>`,
+  checks:["Amplitude is 0.700 Vpp."]},
+{id:"sd2", flow:"shut", sec:"Shutdown", title:"Supply output off", fig:"itech", hl:["onoff"], scr:{v:"40.000",a:"0.000",w:"0.0",out:false},
+  body:`${seq("On/Off")}<p>Supply first. The key goes dark.</p>`,
+  checks:["Supply output off."]},
+{id:"sd3", flow:"shut", sec:"Shutdown", title:"Generator output off", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z",out:false},
+  body:`${seq("Out1 On/Off")}<p>Leave the amplitude at 0.700 Vpp for the next session.</p>`,
+  checks:["Generator Out1 off, amplitude left at 0.700 Vpp."]},
+{id:"sd4", flow:"shut", sec:"Shutdown", title:"Power everything off",
+  body:`<ol><li>Supply power switch</li><li>Generator ⏻</li><li>Scope ⏻</li></ol><p>Give the source 5 minutes before handling. Leave the E-STOP released.</p>`,
+  checks:["Supply, generator and scope powered off."]},
+{id:"done", flow:"shut", sec:"Session", done:true, title:"Session complete",
+  body:`<p style="color:var(--mute)">The wire carried current, the sensor saw a field, and nothing caught fire. That's a win.</p>`}
+];
+const Q={intro:"What happens inside the box stays inside the box.",estop:"It is not a doorbell.",off:"Electrons are patient. They will wait.",
+  sensor:"If the sensor moves, your data moves with it.",outon:"This step should be boring. Boring is good.",scope:"The one place where a flat line is good news.",
+  temp:"It is not a hand warmer, however cold the lab gets.",sd3:"Future you, or a colleague, will be grateful for the 0.7 Vpp.",genamp:"Inductors hate surprises. So do the transistors driving them.",dsoscale:"Measure twice, amplify once.",wiring:"Two minutes here saves an afternoon later."};
+S.forEach(s=>{if(Q[s.id]) s.q=Q[s.id];});
+const GREET=["Hello, ampere enthusiast.", "Ready to push some charge around?", "Welcome. Please keep your hands inside the safe operating area.", "Ohm's law still holds. Let's use it.", "Greetings. The sine waves are warmed up.", "Today's forecast: 15 A peak, high chance of Hall voltage.", "Kirchhoff says what goes in must come out. Let's test that.", "Let's make a magnetic field the old-fashioned way.", "Ampère would be proud. Probably.", "No smoke has been released today. Let's keep it that way.", "Your wire is about to have a busy day.", "Charge carriers, assemble.", "μ₀ is still 4π × 10⁻⁷. Mostly. Let's begin.", "Fields are free. Current costs 123 W.", "Let's turn volts into teslas.", "Ready when you are. So are 10²⁰ electrons per second.", "Welcome to the loop. Please close it on your way in.", "Remember: High Z, not 50 Ω.", "The sine is pure. Let's keep it that way.", "Phase: 0°. Mood: positive.", "Today's special: 10 kHz, served at 0.7 Vpp.", "The Hall sensor is ready to feel things.", "Let's make B happen.", "Right-hand rule engaged.", "∇ × B = μ₀J, and so begins our day.", "Good morning, afternoon, or whatever your scope's time base says.", "0.2 Ω of pure honesty awaits.", "The scope is the source of truth. Say hi to it.", "Let's get some flux moving.", "Today we wrangle amperes. Responsibly.", "Your sine wave has been pre-warmed at 10 kHz.", "Lorentz says hi to the Hall plate.", "May your offsets be small and your SNR large.", "Current is just charge in a hurry.", "The fans are ready to do their best.", "Let's put the A in AC.", "Peak current, peak focus.", "One loop to rule them all.", "Zero DC offset is the dream. Let's live it.", "Your bus bar called. It wants current.", "Ready to convert joules into data?", "Hello, operator. The electrons await your command.", "Let's give the Hall effect something to talk about.", "15 A peak, 0 drama.", "Please mind the 85 °C gap.", "Your magnetic field is being prepared.", "E-STOP released, optimism engaged.", "Faraday would have loved this bench.", "Today we turn milliteslas into millivolts.", "Sine of the times.", "Impedance matched, expectations realistic.", "Nothing up our sleeve but 0.4 µH.", "Let's ride the sine wave.", "The wire is straight. So is this procedure.", "Calibrated current, coming right up.", "Let's make the sensor earn its keep.", "∮ B · dl awaits.", "Fully charged and ready.", "Fewer surprises, more amperes.", "Ground spring short, spirits high.", "Today's band: 10 to 50 kHz of fun.", "Our duty cycle is 100 % helpfulness.", "Take a breath. Then take a measurement.", "Let's do some physics on purpose.", "Somewhere, a Hall plate is getting nervous.", "Electrons don't need coffee. You might.", "Positive half-cycle, positive attitude.", "Greetings, field maker.", "Let the current flow and the data follow.", "Amps are a team sport. You're the captain.", "Supply at 40 V, enthusiasm at 11.", "Real current, real field, real data.", "This session is brought to you by Maxwell's equations.", "Today's mission: B = μ₀I / 2πr, with actual numbers.", "Let's make the wire famous.", "Let's convert curiosity into amperes.", "Scope set to truth mode.", "Small sine in, big sine out.", "Hall effect on. Heat managed.", "Grab the probe. Mind the spring.", "Please fasten your current limit.", "The 0.2 Ω resistor is ready for its close-up.", "Electrons, form an orderly sine.", "Make it flow, make it measured, make it home for dinner.", "Your field trip starts here.", "Greetings, magnetician.", "Steady hands, steady sine.", "We checked: the speed of light is unchanged.", "Another fine day to obey Maxwell.", "Fresh sine, hot off the generator.", "Low distortion, high spirits.", "Big current, small offset, zero smoke.", "Volts are suggestions. Amperes are results.", "The sensor is listening. Say something in teslas.", "Let's make some field data worth plotting.", "RMS: Really Magnificent Sine.", "The loop is closed. The day is open.", "Ready to magnetise some knowledge?", "Let's be the reason the Hall voltage moves.", "Peak performance, 15 A at a time.", "Everything is in phase. Including us.", "Polarity checked? Then let's begin.", "Let the induction begin.", "Hello. Your electrons have been expecting you.", "Welcome back to the land of 0.2 Ω.", "Let's make Biot and Savart proud.", "Current events, literally.", "Let's generate some attractive results.", "Stay positive. Unless you're an electron."];
+let greet=(()=>{let last=-1; try{last=+localStorage.getItem("acsrc-greet");}catch(e){} let i=Math.floor(Math.random()*GREET.length); if(i===last) i=(i+1)%GREET.length; try{localStorage.setItem("acsrc-greet",i);}catch(e){} return i;})();
+/* ---------- state ---------- */
+const LS="acsrc-proc-v7";
+const fresh=()=>({cur:"home",reached:0,mode:null,flow:"run",choice:{},ticks:{}});
+let st=fresh();
+try{const r=JSON.parse(localStorage.getItem(LS)||"null"); if(r&&typeof r.cur==="string") st=Object.assign(fresh(),r);}catch(e){}
+const save=()=>{try{localStorage.setItem(LS,JSON.stringify(st));}catch(e){}};
+const idx=id=>S.findIndex(s=>s.id===id); if(idx(st.cur)<0) st.cur="home";
+const $=id=>document.getElementById(id);
+const E=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+let zoomed=true;
+const visible=s=>s.home||(st.flow==="shut"?s.flow==="shut":(s.flow!=="shut"&&!(s.only&&s.only!==st.mode)&&!(s.group&&st.choice[s.group]!=="change")));
+const V=()=>S.filter(visible);
+const cur=()=>S[idx(st.cur)];
+const ok=s=>!(s.home&&st.flow!=="shut"&&!st.mode)&&!(s.choice&&!st.choice[s.choice])&&(s.checks||[]).every((_,j)=>st.ticks[s.id+"_"+j]);
+
+/* ---------- drawing ---------- */
+const CAP={afg:"Tektronix AFG1062",itech:"ITECH IT-M3900C",scope:"Keysight DSOX3054T",estop:"Source · E-STOP",wiring:"Bench wiring"};
+function draw(step){
+  const st_=$("stage"); if(!st_) return;
+  const host=$("art");
+  host.innerHTML=step.fig==="afg"?afg(step.scr):step.fig==="itech"?itech(step.scr):step.fig==="scope"?scope(step.scr):step.fig==="estop"?estop():wiring();
+  const svg=host.querySelector("svg"), full=svg.getAttribute("viewBox"), hl=step.hl||[], ns="http://www.w3.org/2000/svg";
+  const L=document.createElementNS(ns,"g"); svg.appendChild(L);
+  let x1=1e9,y1=1e9,x2=-1e9,y2=-1e9; const numbered=hl.length>1&&step.fig!=="wiring";
+  const [vx,vy,vw,vh]=full.split(" ").map(Number), boxes=[];
+  hl.forEach(k=>{const g=svg.querySelector(`[data-k="${k}"]`); if(!g) return; let b; try{b=g.getBBox();}catch(e){return;}
+    boxes.push(b); x1=Math.min(x1,b.x);y1=Math.min(y1,b.y);x2=Math.max(x2,b.x+b.width);y2=Math.max(y2,b.y+b.height);});
+  if(boxes.length){
+    const P=5, mid="spot"+Math.random().toString(36).slice(2,7);
+    const cut=boxes.map(b=>`<rect x="${b.x-P}" y="${b.y-P}" width="${b.width+2*P}" height="${b.height+2*P}" rx="7" fill="#000"/>`).join("");
+    L.innerHTML=`<defs><mask id="${mid}"><rect x="${vx-50}" y="${vy-50}" width="${vw+100}" height="${vh+100}" fill="#fff"/>${cut}</mask></defs>
+      <rect class="dim" x="${vx-50}" y="${vy-50}" width="${vw+100}" height="${vh+100}" mask="url(#${mid})"/>`+
+      boxes.map((b,i)=>`<rect class="halo" x="${b.x-P}" y="${b.y-P}" width="${b.width+2*P}" height="${b.height+2*P}" rx="7"/>
+       <rect class="edge" x="${b.x-P}" y="${b.y-P}" width="${b.width+2*P}" height="${b.height+2*P}" rx="7"/>`+
+       (numbered?`<g class="pin"><circle cx="${b.x-P}" cy="${b.y-P}" r="10"/><text x="${b.x-P}" y="${b.y-P}">${i+1}</text></g>`:"")).join("");
+  }
+  const cap=svg.querySelector("#cap"); if(cap) cap.addEventListener("click",()=>{const d=cap.style.transform; cap.style.transform=d?"":"translateY(10px)"; toast(d?"Released.":"Stopped. In the drawing, at least.");});
+  const [fx,fy,fw,fh]=full.split(" ").map(Number); let zv=null;
+  if(window.innerWidth<900&&hl.length&&x2>x1&&step.fig!=="estop"){
+    let p=34,x=x1-p,y=y1-p,w=x2-x1+2*p,h=y2-y1+2*p; const mw=Math.min(fw,380); if(w<mw){x-=(mw-w)/2;w=mw;}
+    const mh=Math.min(fh,w*.55); if(h<mh){y-=(mh-h)/2;h=mh;}
+    x=Math.max(fx,Math.min(x,fx+fw-w)); y=Math.max(fy,Math.min(y,fy+fh-h)); w=Math.min(w,fw); h=Math.min(h,fh);
+    if(w<fw*.85||h<fh*.85) zv=`${x|0} ${y|0} ${w|0} ${h|0}`;
+  }
+  const zb=$("zb");
+  if(zv){zb.hidden=false; const set=()=>{svg.setAttribute("viewBox",zoomed?zv:full); zb.textContent=zoomed?"FULL":"ZOOM";}; set(); zb.onclick=()=>{zoomed=!zoomed;set();};} else zb.hidden=true;
+}
+
+/* ---------- widgets ---------- */
+function ampCalc(){
+  const d=document.createElement("div"); d.className="calc";
+  d.innerHTML=`<div class="row"><label for="ci">Target current</label><input id="ci" type="number" inputmode="decimal" min="0" step="0.5" value="10">
+    <select id="cu" aria-label="Unit"><option value="pk">A peak</option><option value="rms">A rms</option></select></div>
+  <div class="out"><div><span>Set generator to</span><b id="o1"></b></div><div><span>Scope Pk-Pk</span><b id="o2"></b></div><div><span>I pk / I rms</span><b id="o3"></b></div><div><span>Supply draw</span><b id="o4"></b></div></div>
+  <div class="msg" id="om" aria-live="polite"></div><p style="font-size:.75rem;color:var(--mute);margin:0">Calibrated at 10 kHz. Higher frequency needs a little more; trim on the scope.</p>`;
+  const u=()=>{const v=parseFloat(d.querySelector("#ci").value),rms=d.querySelector("#cu").value==="rms",g=isFinite(v)&&v>=0,m=d.querySelector("#om");
+    const ipk=g?(rms?v*Math.SQRT2:v):0, vpp=ipk/K_IPK;
+    d.querySelector("#o1").textContent=g?vpp.toFixed(2)+" Vpp":"–"; d.querySelector("#o2").textContent=g?(ipk*.4).toFixed(2)+" V":"–";
+    d.querySelector("#o3").textContent=g?`${ipk.toFixed(1)} / ${(ipk/Math.SQRT2).toFixed(1)} A`:"–"; d.querySelector("#o4").textContent=g?(P_IDLE+24*ipk/Math.PI).toFixed(0)+" W":"–";
+    m.style.color="var(--warn)";
+    if(!g) m.textContent="";
+    else if(v===42) m.textContent="42 A: the answer to everything, except this board. V1 tops out at 15 A peak.";
+    else if(vpp>VPP_MAX) m.textContent=`Needs ${vpp.toFixed(1)} Vpp, above the ${VPP_MAX} Vpp limit. V1 tops out at 15 A peak; wait for V2.`;
+    else if(vpp>5) m.textContent="Above 5 Vpp: short runs, monitor temperature.";
+    else {m.textContent="Within limits.";m.style.color="var(--ok)";}};
+  d.querySelectorAll("input,select").forEach(x=>x.addEventListener("input",u)); u(); return d;
+}
+function fieldCalc(){
+  const d=document.createElement("div"); d.className="calc";
+  d.innerHTML=`<div class="row"><input id="fi" type="number" inputmode="decimal" min="0" step="0.5" value="11.4" aria-label="Peak current, A"><span>A pk at</span><input id="fr" type="number" inputmode="decimal" min="0.1" step="0.5" value="5" aria-label="Distance, mm"><span>mm from wire centre</span></div>
+  <div class="out"><div><span>B peak</span><b id="b1"></b></div><div><span>B rms</span><b id="b2"></b></div></div>
+  <p style="font-size:.78rem;color:var(--mute)">Long straight wire: B = μ₀I / 2πr</p>`;
+  const u=()=>{const I=parseFloat(d.querySelector("#fi").value),r=parseFloat(d.querySelector("#fr").value)/1000,g=isFinite(I)&&r>0,B=g?2e-7*I/r:0;
+    d.querySelector("#b1").textContent=g?(B*1e3).toFixed(3)+" mT":"–"; d.querySelector("#b2").textContent=g?(B*1e3/Math.SQRT2).toFixed(3)+" mT":"–";};
+  d.querySelectorAll("input").forEach(x=>x.addEventListener("input",u)); u(); return d;
+}
+function opts(list,sel,pick,label){
+  const b=document.createElement("div"); b.className="opts"; b.setAttribute("role","group"); b.setAttribute("aria-label",label);
+  b.innerHTML=list.map(o=>`<button type="button" class="opt" data-v="${o[0]}" aria-pressed="${sel===o[0]}"><b>${E(o[1])}</b><span>${E(o[2])}</span></button>`).join("");
+  b.querySelectorAll("button").forEach(x=>x.addEventListener("click",()=>{b.querySelectorAll("button").forEach(y=>y.setAttribute("aria-pressed",String(y===x))); pick(x.dataset.v);})); return b;
+}
+let tt; function toast(m){let t=document.querySelector(".toast"); if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.appendChild(t);} t.textContent=m; clearTimeout(tt); tt=setTimeout(()=>t.remove(),2800);}
+
+/* ---------- render ---------- */
+function render(){
+  const s=cur(), vis=V(), pos=vis.indexOf(s), oi=idx(s.id); if(oi>st.reached) st.reached=oi;
+  const total=vis.filter(x=>!x.home&&!x.done&&!x.runend).length;
+  $("pg").style.width=(vis.length>1?pos/(vis.length-1)*100:0)+"%";
+  $("count").textContent=(s.home||s.done||s.runend)?"":`${String(pos).padStart(2,"0")} / ${String(total).padStart(2,"0")}`;
+  const m=$("main"); m.className="step "+(s.fig?"fig":"nofig");
+  m.innerHTML=(s.fig?`<div class="stage" id="stage"><div id="art"></div><span class="cap">${E(CAP[s.fig])}</span><button class="zb" id="zb" type="button" hidden>FULL</button></div>`:"")+
+   `<section class="sheet ${s.home?'home':''}">${s.home||s.done||s.runend?"":`<div class="num">${String(pos).padStart(2,"0")}</div>`}
+    ${s.home?`<div class="sec">AC Current Source V1 · operating procedure</div><h1 class="greet" id="greet" title="Another one">${E(GREET[greet])}</h1>`:`<div class="sec">${E(s.sec)}${st.mode?(st.mode==="exp"?" · quick":" · full"):""}</div><h1>${E(s.title)}</h1>`}
+    <div class="body">${s.body}</div>${s.q?`<p class="q">${E(s.q)}</p>`:""}<div id="x"></div><div id="mr"></div><div id="ck"></div></section>`;
+  if(s.home){ $("x").appendChild(opts([["beg","Full procedure","Every step, one action per page."],["exp","Quick checklist","For regular users. Combined checks, same safety gates."]],st.flow==="run"?st.mode:null,v=>{st.mode=v;st.flow="run";save();setTimeout(()=>go(1),170);},"Start a session"));
+    const tl=document.createElement("div"); tl.className="tools";
+    tl.innerHTML=`<button type="button" class="tool" id="tShut"><span class="ic"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1.5v6M4.2 3.8a5.5 5.5 0 1 0 7.6 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Shut down</button>
+      <button type="button" class="tool" id="tCalc"><span class="ic"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="2.5" y="1.5" width="11" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 5h6M5 8.5h1M7.5 8.5h1M10 8.5h1M5 11.5h1M7.5 11.5h1M10 11.5h1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>Calculator</button>`;
+    $("x").appendChild(tl);
+    $("tShut").addEventListener("click",()=>{st.flow="shut"; S.filter(x=>x.flow==="shut").forEach(x=>(x.checks||[]).forEach((_,j)=>delete st.ticks[x.id+"_"+j])); st.cur="sd1"; zoomed=true; render(); window.scrollTo(0,0);});
+    $("tCalc").addEventListener("click",openCalc);
+    $("greet").addEventListener("click",()=>{greet=(greet+1+Math.floor(Math.random()*(GREET.length-1)))%GREET.length; $("greet").textContent=GREET[greet];}); }
+  if(s.choice) $("x").appendChild(opts(s.options,st.choice[s.choice],v=>{st.choice[s.choice]=v;save();setTimeout(()=>go(1),170);},"Settings match?"));
+  if(s.more){
+    const bar=document.createElement("div"); bar.className="more"; const dr=document.createElement("div"); dr.className="drawer"; dr.hidden=true;
+    s.more.forEach(([lab,c],i)=>{const b=document.createElement("button"); b.type="button"; b.textContent=lab; b.setAttribute("aria-expanded","false");
+      b.addEventListener("click",()=>{const open=b.getAttribute("aria-expanded")==="true"; bar.querySelectorAll("button").forEach(x=>x.setAttribute("aria-expanded","false"));
+        if(open){dr.hidden=true;return;} b.setAttribute("aria-expanded","true"); dr.hidden=false; dr.innerHTML="";
+        if(c==="@amp") dr.appendChild(ampCalc()); else if(c==="@field") dr.appendChild(fieldCalc()); else dr.innerHTML=c;});
+      bar.appendChild(b);});
+    $("mr").append(bar,dr);
+  }
+  const c=s.checks||[];
+  if(c.length){const b=document.createElement("div"); b.className="sign";
+    b.innerHTML=`<div class="h">Confirm</div>`+c.map((t,j)=>`<label class="ck"><input type="checkbox" id="c_${s.id}_${j}" ${st.ticks[s.id+"_"+j]?"checked":""}><span>${E(t)}</span></label>`).join("");
+    b.querySelectorAll("input").forEach((x,j)=>x.addEventListener("change",()=>{st.ticks[s.id+"_"+j]=x.checked;save();nav();})); $("ck").appendChild(b);}
+  if(s.fig) draw(s);
+  nav();
+  try{const h="#"+s.id; if(location.hash!==h) history.replaceState(null,"",h);}catch(e){}
+  save();
+}
+function nav(){
+  const s=cur(), vis=V(), pos=vis.indexOf(s), g=ok(s), last=pos===vis.length-1;
+  $("bBack").disabled=pos<=0;
+  $("bNextT").textContent=last?"Home":(s.home?"Continue":"Next");
+  $("bNext").disabled=!g&&!last;
+  const h=$("hint");
+  if(!g){h.textContent=(s.home||s.choice)?"Select an option":"Confirm all items";h.className="hint need";}
+  else{h.textContent=last?"":(s.home&&st.flow==="shut"?"":"Next: "+vis[pos+1].title);h.className="hint";}
+}
+function go(d){const vis=V(),p=vis.indexOf(cur()),n=p+d; if(n<0||n>=vis.length) return; if(d>0&&!ok(cur())) return; st.cur=vis[n].id; zoomed=true; render(); window.scrollTo(0,0);}
+function restart(){const s=cur(), m=st.mode; if(s.runend){st.cur="home";} else {st=fresh(); st.mode=m;} save(); render(); window.scrollTo(0,0);}
+$("bNext").addEventListener("click",()=>{const v=V(); if(v.indexOf(cur())===v.length-1) restart(); else go(1);});
+$("bBack").addEventListener("click",()=>go(-1));
+
+/* ---------- panels ---------- */
+const openOv=id=>{$(id).hidden=false;$(id).querySelector("[data-close]").focus();};
+const closeOv=()=>document.querySelectorAll(".ov").forEach(o=>o.hidden=true);
+document.querySelectorAll(".ov").forEach(o=>{o.addEventListener("click",e=>{if(e.target===o)closeOv();});o.querySelector("[data-close]").addEventListener("click",closeOv);});
+$("tbHelp").addEventListener("click",()=>openOv("ovHelp"));
+function openCalc(){ $("calcA").replaceChildren(ampCalc()); $("calcB").replaceChildren(fieldCalc()); openOv("ovCalc"); }
+$("tbSteps").addEventListener("click",()=>{
+  let h="",last="";
+  if(st.mode) h+=`<div class="modesw"><span>${st.mode==="exp"?"Quick checklist":"Full procedure"}</span><button type="button" id="sw">Switch</button></div>`;
+  V().forEach((s,j)=>{if(s.sec!==last){h+=`<div class="grp">${E(s.sec)}</div>`;last=s.sec;}
+    h+=`<button type="button" class="it ${s===cur()?'cur':''}" data-id="${s.id}" ${idx(s.id)<=st.reached?"":"disabled"}><span class="n">${String(j).padStart(2,"0")}</span><span>${E(s.title)}</span></button>`;});
+  $("list").innerHTML=h;
+  $("list").querySelectorAll("button.it").forEach(b=>b.addEventListener("click",()=>{st.cur=b.dataset.id;zoomed=true;closeOv();render();window.scrollTo(0,0);}));
+  const sw=$("sw"); if(sw) sw.addEventListener("click",()=>{st.mode=st.mode==="exp"?"beg":"exp"; if(!visible(cur())){const oi=idx(st.cur); st.cur=(S.slice(oi).find(visible)||S.slice(0,oi).reverse().find(visible)).id;} closeOv(); render();});
+  openOv("ovSteps");
+});
+$("bReset").addEventListener("click",()=>{st=fresh();save();closeOv();render();});
+$("tbTheme").addEventListener("click",()=>{const r=document.documentElement,c=r.getAttribute("data-theme"),dk=c?c==="dark":matchMedia("(prefers-color-scheme: dark)").matches; r.setAttribute("data-theme",dk?"light":"dark");});
+document.addEventListener("keydown",e=>{
+  if(e.target.matches("input")) return;
+  if(document.querySelector(".ov:not([hidden])")){ if(e.key==="Escape") closeOv(); return; }
+  if(e.key==="ArrowRight") go(1); if(e.key==="ArrowLeft") go(-1);
+});
+/* the logo has a square-wave mode for anyone who clicks it seven times */
+let lc=0,lt=0;
+$("mark").addEventListener("click",()=>{const n=Date.now(); lc=n-lt<600?lc+1:1; lt=n;
+  if(lc===7){lc=0; const p=$("mw"); p.setAttribute("d","M5 21 V9 H15 V21 H25 V9"); toast("Square wave. Odd harmonics only, please."); setTimeout(()=>p.setAttribute("d","M5 15 C9 5,11 5,15 15 S21 25,25 15"),3500);}});
+
+/* parallax: pointer + scroll drive --mx/--my/--sy */
+(function(){ if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const r=document.documentElement; let tx=0,ty=0,cx=0,cy=0,raf=0;
+  const loop=()=>{cx+=(tx-cx)*.08; cy+=(ty-cy)*.08; r.style.setProperty("--mx",cx.toFixed(3)); r.style.setProperty("--my",cy.toFixed(3));
+    raf=(Math.abs(tx-cx)>.001||Math.abs(ty-cy)>.001)?requestAnimationFrame(loop):0;};
+  addEventListener("pointermove",e=>{ if(e.pointerType!=="mouse") return; tx=e.clientX/innerWidth*2-1; ty=e.clientY/innerHeight*2-1; if(!raf) raf=requestAnimationFrame(loop);},{passive:true});
+  addEventListener("scroll",()=>r.style.setProperty("--sy",Math.round(scrollY)),{passive:true});
+})();
+function fromHash(){const id=(location.hash||"").slice(1),i=idx(id); if(i>=0&&i<=st.reached&&visible(S[i])) st.cur=id;}
+fromHash();
+window.addEventListener("hashchange",()=>{fromHash();render();});
+let rt; window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{const s=cur(); if(s.fig) draw(s);},150);});
+render();
+})();
+</script>
+
+</body>
+</html>
