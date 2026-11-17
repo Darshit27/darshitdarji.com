@@ -7,6 +7,7 @@
 <link rel="canonical" href="https://darshitdarji.com/guides/ac-current-source-v1/">
 <style>body{margin:0}img{max-width:100%}</style>
 <title>AC Current Source V1</title>
+<script>document.documentElement.setAttribute("data-theme","dark")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -205,6 +206,9 @@ ol.sl{padding-left:1.3em;margin:12px 0;max-width:58ch}ol.sl li{margin:6px 0}
 /* home */
 h1.greet{font:400 clamp(2rem,4.6vw,3.3rem)/1.15 var(--f-serif);letter-spacing:-.01em;margin:6px 0 64px;cursor:pointer;max-width:20ch}
 .hgrp{margin-top:26px}
+.mark .i-back{display:none}body.on-home .mark .i-home{display:none}body.on-home .mark .i-back{display:block}
+.hgrp.two .opts{grid-template-columns:1fr 1fr}
+.hgrp.two .opt{min-height:0;padding:14px 16px}.hgrp.two .opt b{font-size:1.05rem}.hgrp.two .opt span{font-size:.82rem}
 .hlab{font:600 .64rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:-10px}
 .hgrp .opts{margin-top:16px}
 .home h1.greet:hover{color:var(--accent)}
@@ -309,7 +313,7 @@ svg .mono{font-family:var(--f-mono)}
 <header class="top">
   <div class="bar1 gut">
     <a class="mark" id="tbHome" href="/guides/" aria-label="Home: all guides">
-      <span class="hm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></span>
+      <span class="hm"><svg class="i-home" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><svg class="i-back" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span>
       <span><b class="full">AC Current Source V1</b><b class="short">AC Source V1</b></span>
     </a>
     <span class="count" id="count"></span>
@@ -967,9 +971,9 @@ function render(){
     <div class="body">${s.body}</div>${s.q?`<p class="q">${E(s.q)}</p>`:""}<div id="x"></div><div id="mr"></div><div id="ck"></div></section>`;
   if(s.home){
     const x=$("x");
-    const grp=(t)=>{const d=document.createElement("div"); d.className="hgrp"; d.innerHTML=`<div class="hlab">${t}</div>`; x.appendChild(d); return d;};
+    const grp=(t,c)=>{const d=document.createElement("div"); d.className="hgrp"+(c?" "+c:""); d.innerHTML=`<div class="hlab">${t}</div>`; x.appendChild(d); return d;};
     grp("Start a session").appendChild(opts([["beg","Beginner","First time, or it has been a while. Step by step, with reasons."],["exp","Experienced","You have run it before. Short checklists."]],null,v=>{st=fresh(); st.mode=v; st.flow="run"; save(); setTimeout(()=>go(1),170);},"Start a session"));
-    grp("Other").appendChild(opts([["shut","Shut down","Finished measuring? Switch everything off in the right order.","alt"],["calc","Calculator","Generator amplitude for a target current.","alt"]],null,v=>{
+    grp("Other","two").appendChild(opts([["shut","Shutdown guide","Switch everything off in order.","alt"],["calc","Calculator","Amplitude for a target current.","alt"]],null,v=>{
       if(v==="shut"){ st=fresh(); st.flow="shut"; st.cur="sd2"; zoomed=true; save(); setTimeout(()=>{render(); window.scrollTo(0,0);},170); }
       else { openCalc(); x.querySelectorAll(".opt").forEach(o=>o.setAttribute("aria-pressed","false")); }
     },"Other actions"));
@@ -1001,7 +1005,7 @@ function nav(){
   const s=cur(), vis=V(), pos=vis.indexOf(s), g=ok(s), last=pos===vis.length-1;
   $("bBack").disabled=pos<=0;
   $("bNextT").textContent=last?"Home":"Next";
-  document.querySelector("nav.nav").classList.toggle("runend",!!s.runend); $("bShut").hidden=!s.runend;
+  document.querySelector("nav.nav").classList.toggle("runend",!!s.runend); $("tbHome").setAttribute("aria-label",s.home?"Back to all lab guides":"Home: start page"); $("bShut").hidden=!s.runend;
   $("bNext").disabled=!g&&!last;
   const h=$("hint");
   if(!g){h.textContent=(s.home||s.choice)?"Select an option":"Confirm all items";h.className="hint need";}
@@ -1036,7 +1040,8 @@ document.addEventListener("keydown",e=>{
   if(document.querySelector(".ov:not([hidden])")){ if(e.key==="Escape") closeOv(); return; }
   if(e.key==="ArrowRight") go(1); if(e.key==="ArrowLeft") go(-1);
 });
-$("tbHome").addEventListener("click",()=>{st=fresh(); try{localStorage.removeItem(LS);}catch(e){}});
+$("tbHome").addEventListener("click",e=>{ if(cur().home) { st=fresh(); try{localStorage.removeItem(LS);}catch(x){} return; }
+  e.preventDefault(); st=fresh(); zoomed=true; save(); closeOv(); render(); window.scrollTo(0,0);});
 /* parallax: pointer + scroll drive --mx/--my/--sy */
 (function(){ if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const r=document.documentElement; let tx=0,ty=0,cx=0,cy=0,raf=0;

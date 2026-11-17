@@ -9,13 +9,13 @@
 :root{--bg:#fff;--ink:#101416;--mute:#5c656a;--accent:#e0531a;--glass:rgba(255,255,255,.72);--line:rgba(16,20,22,.08);--b2:#5b7cfa;--b3:#1fb59a;--bo:.26}
 [data-theme="dark"]{--bg:#0e1113;--ink:#eceeee;--mute:#97a1a6;--accent:#ff6a2e;--glass:rgba(16,20,23,.66);--line:rgba(255,255,255,.1);--bo:.2;color-scheme:dark}
 *{box-sizing:border-box}html{background:var(--bg)}
-body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:18px/1.5 Barlow,system-ui,sans-serif;isolation:isolate;padding:0 max(16px,env(safe-area-inset-left)) 40px max(16px,env(safe-area-inset-right))}
+body{margin:0;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font:18px/1.5 Barlow,system-ui,sans-serif;isolation:isolate;padding:0 max(16px,env(safe-area-inset-left)) 40px max(16px,env(safe-area-inset-right))}
 .amb{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
 .amb i{position:absolute;border-radius:50%;filter:blur(70px);opacity:var(--bo)}
 .amb i:nth-child(1){width:46vmax;height:46vmax;left:-12vmax;top:-14vmax;background:var(--accent)}
 .amb i:nth-child(2){width:40vmax;height:40vmax;right:-14vmax;top:22vh;background:var(--b2)}
 .amb i:nth-child(3){width:30vmax;height:30vmax;left:30vw;bottom:-16vmax;background:var(--b3)}
-.wrap{max-width:760px;margin:0 auto;padding-top:64px}
+.wrap{max-width:760px;width:100%;margin:0 auto;padding-top:64px}
 .sec{font:600 .68rem "Martian Mono",ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
 h1{font:700 clamp(2.2rem,6vw,3.6rem)/1.05 "Barlow Semi Condensed","Arial Narrow",sans-serif;margin:8px 0 28px}
 a.card{display:grid;grid-template-columns:auto 1fr auto;gap:4px 16px;align-items:center;text-decoration:none;color:inherit;padding:20px 22px;border-radius:22px;margin-bottom:12px;
@@ -24,11 +24,12 @@ a.card:hover{transform:translateY(-2px)}
 a.card b{font:700 1.35rem "Barlow Semi Condensed",sans-serif}
 a.card span{color:var(--mute);font-size:.95rem;grid-column:2}
 a.card b{grid-column:2}
+a.card .nw{white-space:nowrap;color:inherit;font-size:inherit;grid-column:auto}
 a.card .ic{grid-row:1/3;grid-column:1;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--line);color:var(--accent)}
 a.card .ic svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 a.card i{grid-row:1/3;grid-column:3;font-style:normal;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:700}
 a.plain{color:var(--accent);font-weight:600}
-footer{margin-top:56px;text-align:center;font:400 .66rem "Martian Mono",monospace;letter-spacing:.06em}
+footer{margin-top:auto;padding-top:56px;text-align:center;font:400 .66rem "Martian Mono",monospace;letter-spacing:.06em}
 footer a{color:var(--mute);text-decoration:none;opacity:.8}footer a:hover{color:var(--accent);opacity:1}
 .thm{position:fixed;top:max(14px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--glass);color:var(--ink);display:grid;place-items:center;cursor:pointer;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .thm svg{width:18px;height:18px}
@@ -37,9 +38,9 @@ footer a{color:var(--mute);text-decoration:none;opacity:.8}footer a:hover{color:
 <main class="wrap">
 <button class="thm" id="thm" type="button" aria-label="Switch light or dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
 <h1>Lab guides</h1>
-<a class="card" href="ac-current-source-v1/"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 12c2.5-8 5.5-8 8 0s5.5 8 8 0c1-3 2-4.5 3-5"/></svg></span><b>AC Current Source V1</b><span>Operating procedure · 10–50 kHz · up to 15 A peak</span><i>→</i></a>
+<a class="card" href="ac-current-source-v1/"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 12c2.5-8 5.5-8 8 0s5.5 8 8 0c1-3 2-4.5 3-5"/></svg></span><b>AC Current Source V1</b><span>Operating procedure<br><span class="nw">10–50 kHz</span> · <span class="nw">up to 15 A peak</span></span><i>→</i></a>
 <!-- add more guides here: copy the <a class="card"> line above and change the folder name and text -->
-<footer><a href="/">darshitdarji.com</a></footer>
 </main>
+<footer><a href="/">darshitdarji.com</a></footer>
 <script>document.getElementById("thm").addEventListener("click",()=>{const r=document.documentElement,dk=r.getAttribute("data-theme")!=="dark"; if(dk) r.setAttribute("data-theme","dark"); else r.removeAttribute("data-theme"); try{localStorage.setItem("dd-theme",dk?"dark":"light");}catch(e){}});</script>
 </body></html>
