@@ -33,10 +33,6 @@
   --glass:rgba(255,255,255,.72); --blob2:#5b7cfa; --blob3:#1fb59a; --blob-o:.28;
   --surface:var(--bg); --fg:var(--ink);
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e1113; --fill:#181d20; --fill-2:#21282b; --ink:#eceeee; --mute:#97a1a6; --rule:#262d31;
-  --stage:#191e21; --accent:#ff6a2e; --accent-ink:#140600; --accent-soft:#3a1a0c;
-  --warn:#ff7b6e; --warn-soft:#361411; --ok:#4cc58a; --key:#e6e9e9; --key-ink:#101416; --glass:rgba(16,20,23,.66); --blob-o:.22; --frost:rgba(255,255,255,.07); --frost-line:transparent; --frost-hi:rgba(255,255,255,.05); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e1113; --fill:#181d20; --fill-2:#21282b; --ink:#eceeee; --mute:#97a1a6; --rule:#262d31;
   --stage:#191e21; --accent:#ff6a2e; --accent-ink:#140600; --accent-soft:#3a1a0c;
@@ -117,13 +113,32 @@ kbd{display:inline-block;font:600 .74rem/1 var(--f-mono);background:var(--key);c
 table{border-collapse:collapse;font-variant-numeric:tabular-nums;width:100%;max-width:58ch;font-size:.95rem}
 td,th{padding:8px 0;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
 th{font:600 .62rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
-td.r,th.r{text-align:right;padding-left:12px;white-space:nowrap}
+td.r,th.r{text-align:right;padding-left:12px;overflow-wrap:anywhere}
+table.nw td.r,table.nw th.r{white-space:nowrap}
+td:first-child{padding-right:8px}
 td.r{font:400 .8rem var(--f-mono)}
 tr.lim td{color:var(--warn);font-weight:600}
 .tw{overflow-x:auto;max-width:100%}
 
 /* sign-off */
 .sign{margin:22px 0 4px;max-width:58ch}
+.rl{display:grid;gap:10px;margin:16px 0;max-width:58ch}
+.ri{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:14px;background:var(--fill)}
+.ri .ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--bg);color:var(--accent)}
+.ri .ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ri b{display:block;font-size:1rem;line-height:1.3}.ri span{display:block;font-size:.92rem;color:var(--mute);margin-top:3px}
+.ri span:empty{display:none}
+.ri.bad{background:var(--warn-soft)}.ri.bad .ico{color:var(--warn)}.ri.bad b{color:var(--warn)}
+.states{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;max-width:58ch}
+.states .st{border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.states .st span{font-size:.88rem;font-weight:600}.states .st b{font:700 1.7rem/1 var(--f-mono);letter-spacing:.04em}
+.states .off{background:#d81f1f1f;color:#c0191b}.states .on{background:#1f9d4f1f;color:#16803f}
+:root[data-theme="dark"] .states .off{color:#ff7a70}:root[data-theme="dark"] .states .on{color:#5fd18a}
+.lim6{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:14px 0;padding:14px 16px;border-radius:14px;background:var(--warn-soft);color:var(--warn);max-width:58ch}
+.lim6 span{font-weight:600;font-size:.95rem}.lim6 b{font:700 2rem/1 var(--f-mono)}
+ol.sl{padding-left:1.3em;margin:12px 0;max-width:58ch}ol.sl li{margin:6px 0}
+.fx{font:600 .95rem var(--f-mono);background:var(--fill);border-radius:12px;padding:12px 14px;margin:12px 0;max-width:58ch;overflow-wrap:anywhere}
+#x .calc{margin-top:18px;background:var(--fill);border-radius:18px;padding:16px}
 .sign .h{font:600 .62rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
 .ck{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--rule);cursor:pointer}
 .ck:last-child{border-bottom:1px solid var(--rule)}
@@ -139,6 +154,12 @@ tr.lim td{color:var(--warn);font-weight:600}
 .opt b{font:700 1.2rem var(--f-head);letter-spacing:.01em}
 .opt span{font-size:.92rem;color:var(--mute)}
 .opt:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 50%,var(--frost-line))}
+.opt.pri{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 12px 30px -14px color-mix(in srgb,var(--accent) 80%,transparent)}
+.opt.pri span{color:#ffffffd0}
+.opt.pri:hover{border-color:var(--accent);filter:brightness(1.05)}
+.opt.alt{background:transparent;border:1.5px solid color-mix(in srgb,var(--ink) 22%,transparent);box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+.opt.alt:hover{border-color:var(--accent)}
+.opt.pri[aria-pressed="true"]{background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
 .opt[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--frost));box-shadow:inset 0 1px 0 var(--frost-hi),0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
 
 /* more toggles */
@@ -182,7 +203,7 @@ tr.lim td{color:var(--warn);font-weight:600}
 
 
 /* home */
-.home h1.greet{font:400 clamp(2rem,4.6vw,3.3rem)/1.15 var(--f-serif);letter-spacing:-.01em;margin:6px 0 64px;cursor:pointer;max-width:20ch}
+h1.greet{font:400 clamp(2rem,4.6vw,3.3rem)/1.15 var(--f-serif);letter-spacing:-.01em;margin:6px 0 64px;cursor:pointer;max-width:20ch}
 .hgrp{margin-top:26px}
 .hlab{font:600 .64rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:-10px}
 .hgrp .opts{margin-top:16px}
@@ -215,6 +236,23 @@ nav.nav .in{display:flex;align-items:center;gap:12px}
   box-shadow:inset 0 1px 0 #ffffff70,0 10px 30px -10px color-mix(in srgb,var(--accent) 70%,transparent)}
 .btn.next .ic{background:#ffffff38}
 .btn[disabled]{opacity:.4;cursor:not-allowed;filter:saturate(.4)}
+.btn.back{background:transparent;box-shadow:none;border:1.5px solid color-mix(in srgb,var(--ink) 18%,transparent);-webkit-backdrop-filter:none;backdrop-filter:none}
+.btn.shut[hidden]{display:none}
+.btn.shut{padding:0 24px 0 10px;color:#fff;border-color:var(--accent);background:var(--accent);box-shadow:0 10px 30px -10px color-mix(in srgb,var(--accent) 70%,transparent)}
+.btn.shut .ic{background:#ffffff38}
+nav.nav .in{position:relative}
+nav.nav.runend .btn.shut{position:absolute;left:50%;transform:translateX(-50%)}
+nav.nav.runend .btn.shut:hover{transform:translateX(-50%) translateY(-1px)}
+nav.nav.runend .btn.next{color:var(--ink);background:transparent;border:1.5px solid color-mix(in srgb,var(--ink) 18%,transparent);box-shadow:none;min-width:0;gap:10px}
+nav.nav.runend .btn.next .ic{background:var(--frost-hi)}
+nav.nav.runend .hint{display:none}
+nav.nav.runend .btn.next{margin-left:auto}
+@media (max-width:640px){
+  nav.nav.runend .in{flex-wrap:wrap;row-gap:10px}
+  nav.nav.runend .btn.shut{position:static;transform:none;order:-1;flex:1 1 100%;justify-content:center}
+  nav.nav.runend .btn.shut:hover{transform:none}
+  nav.nav.runend .btn.next{margin-left:auto}
+}
 
 /* side panels */
 .ov{position:fixed;inset:0;z-index:20;background:#0009;display:flex;justify-content:flex-end}
@@ -263,11 +301,10 @@ svg .mono{font-family:var(--f-mono)}
   .mark span em{display:none}
 }
 @media (max-width: 520px){ .mark .full{display:none} .mark .short{display:inline} .tb{padding:0 8px} }
-@media (max-width: 420px){ .mark span:not(.hm){display:none} .btn.next{min-width:132px;margin-left:auto} .tb{padding:0 11px} .hint{display:none} #tbTheme{display:none} }
+@media (max-width: 420px){ .mark span:not(.hm){display:none} .btn.next{min-width:132px;margin-left:auto} .tb{padding:0 11px} .hint{display:none} }
 </style>
 </head>
 <body>
-
 <div class="amb" aria-hidden="true"><i></i><i></i><i></i></div>
 <header class="top">
   <div class="bar1 gut">
@@ -288,6 +325,7 @@ svg .mono{font-family:var(--f-mono)}
 <nav class="nav"><div class="in">
   <button class="btn back" id="bBack" type="button"><span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back</button>
   <div class="hint" id="hint"></div>
+  <button class="btn shut" id="bShut" type="button" hidden><span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 2v6M4.6 4.2a5 5 0 1 0 6.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span>Shutdown guide</span></button>
   <button class="btn next" id="bNext" type="button"><span id="bNextT">Next</span><span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
 </div></nav>
 
@@ -306,22 +344,27 @@ svg .mono{font-family:var(--f-mono)}
   <div class="oh"><h2>Troubleshooting</h2><button class="tb" data-close type="button">Close</button></div>
   <div class="alert"><span class="tag">DANGER</span><div>Smoke, burning smell or sparks: press <b>E-STOP</b>, then switch the supply output off.</div></div>
   <dl class="tr">
-  <dt>No output current, supply draw near zero</dt><dd>E-STOP is pressed. Twist it clockwise to release. Check supply On/Off is lit and generator Out1 is on.</dd>
-  <dt>Supply in CC, voltage dropping</dt><dd>5 A limit reached. Output off, check the wire loop for a short. If the loop is fine, report to the setup owner.</dd>
-  <dt>Supply shows OVP or a protection message</dt><dd>Press <kbd>Esc</kbd> or <kbd>Enter</kbd> to clear, confirm V-set = 40 V, then <kbd>On/Off</kbd>.</dd>
-  <dt>Thick or fuzzy scope trace</dt><dd>Check the probe uses the short ground spring. If it persists with the signal off, stop and report.</dd>
-  <dt>Current is half or double the expected value</dt><dd>Generator load setting: Utility → Output Setup → CH1Load must be High Z.</dd>
-  <dt>Amplitude jumps without input change</dt><dd>Reduce amplitude, output off, report.</dd>
-  <dt>DC shift in the sensor reading</dt><dd>Repeat the offset null step.</dd>
-  <dt>Lower current at high frequency</dt><dd>Expected. Loop inductance reduces current; shorten the loop or lower the frequency.</dd>
-  <dt>One area much hotter than the rest</dt><dd>Reduce amplitude, stop, report.</dd>
+  <dt>Smoke, burning smell, spark or unusual sound</dt><dd>Press the E-STOP immediately. Then supply output off, generator output off. Report to the setup owner.</dd>
+  <dt>No output current, supply draw near idle</dt><dd>E-STOP is pressed (OFF): rotate it clockwise to release (ON). Check supply output is on and generator output is on.</dd>
+  <dt>Supply in CC, voltage dropping</dt><dd>3.5 A limit reached. Amplitude down to 700 mVpp, supply output off, check the loop for a short. If the loop is fine, report.</dd>
+  <dt>Supply shows a protection message</dt><dd>Supply output off and report to the setup owner. Do not change the protection settings.</dd>
+  <dt>Generator settings look wrong</dt><dd>Utility → Recall → Setup 0, then compare the screen with the settings table.</dd>
+  <dt>Current is half or double the expected value</dt><dd>Generator load must be High Z. Recall Setup 0.</dd>
+  <dt>Scope shows only half a cycle</dt><dd>Normal after Auto Scale. Turn the Horizontal knob until full cycles are visible.</dd>
+  <dt>Looks like two sines overlapping</dt><dd>Switching noise. Press Run/Stop to freeze the trace.</dd>
+  <dt>Pk-Pk, Max or Min readings jump around</dt><dd>They include switching noise. Freeze the trace and use the Y cursors instead.</dd>
+  <dt>Offset outside ±5 mV at 10 kHz, 700 mVpp</dt><dd>Shut down and report to the setup owner.</dd>
+  <dt>Waveform changes when someone is near the board</dt><dd>Hands off the PCB. If it persists, amplitude to 700 mVpp, shut down and report.</dd>
+  <dt>Amplitude jumps without input change</dt><dd>Reduce amplitude, shut down, report.</dd>
+  <dt>Lower current at high frequency</dt><dd>Expected: |Z| rises with frequency. Use the calculator for the new amplitude.</dd>
+  <dt>Hotspot MAX reaches 85 °C</dt><dd>Amplitude back to 700 mVpp and let the fans cool it. Keep fan inlets clear.</dd>
   </dl>
 </div></div>
 
 <script>
 (function(){
 "use strict";
-const K_IPK=2.284, VPP_MAX=6.6, P_IDLE=10;
+const G_OUT=6.03/2/6.6, VPP_MAX=6.6, P_IDLE=10.4;   /* G_OUT: V peak at buffer OUT per generator Vpp, measured at 10 kHz */
 
 /* ---------- small SVG helpers ---------- */
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
@@ -396,10 +439,11 @@ function scope(s){
   let tr="";
   const cx=30, cw=420, cy=180;
   if(s.trace==="flat") tr=`<path d="M${cx} ${cy} H${cx+cw}" stroke="#ffd400" stroke-width="2.5" fill="none"/>`;
-  if(s.trace==="sine"){
-    let d=""; for(let i=0;i<=200;i++){const x=cx+i*cw/200, y=cy-s.amp*110*Math.sin(i/200*Math.PI*6); d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" ";}
-    tr=`<path d="${d}" stroke="#ffd400" stroke-width="2.5" fill="none"/>`;
-  }
+  const wave=(cyc,ph,jit)=>{let d=""; for(let i=0;i<=240;i++){const x=cx+i*cw/240, y=cy-s.amp*110*Math.sin(i/240*Math.PI*2*cyc+ph)+(jit?Math.sin(i*7.3)*3:0); d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" ";} return d;};
+  if(s.trace==="sine") tr=`<path d="${wave(3,0,1)}" stroke="#ffd400" stroke-width="2.5" fill="none"/>`;
+  if(s.trace==="half") tr=`<path d="${wave(0.5,Math.PI/2,1)}" stroke="#ffd400" stroke-width="2.5" fill="none"/>`;
+  if(s.trace==="double") tr=`<path d="${wave(3,0,1)}" stroke="#ffd400" stroke-width="2" fill="none" opacity=".9"/><path d="${wave(3,Math.PI,1)}" stroke="#ffd400" stroke-width="2" fill="none" opacity=".9"/>`;
+  if(s.cursors){const a=s.amp*110; tr+=`<g stroke="#ff8a3d" stroke-width="1.6" stroke-dasharray="6 4"><line x1="${cx}" y1="${cy-a}" x2="${cx+cw}" y2="${cy-a}"/><line x1="${cx}" y1="${cy+a}" x2="${cx+cw}" y2="${cy+a}"/></g><text x="${cx+cw-6}" y="${cy-a-5}" font-size="12" class="mono" fill="#ff8a3d" text-anchor="end">Y1</text><text x="${cx+cw-6}" y="${cy+a+15}" font-size="12" class="mono" fill="#ff8a3d" text-anchor="end">Y2</text>`;}
   let grid=""; for(let i=1;i<10;i++) grid+=`<line x1="${cx+i*42}" y1="54" x2="${cx+i*42}" y2="306" stroke="#2b3238" stroke-width="1"/>`;
   for(let j=1;j<6;j++) grid+=`<line x1="${cx}" y1="${54+j*42}" x2="${cx+cw}" y2="${54+j*42}" stroke="#2b3238" stroke-width="1"/>`;
   const meas=s.meas.map((m,i)=>`<text x="${cx+8}" y="${294-i*20}" font-size="14" class="mono" fill="#ffd400">${esc(m)}</text>`).join("");
@@ -410,9 +454,10 @@ function scope(s){
   <rect x="22" y="46" width="436" height="268" rx="4" fill="var(--sc-scr)"/>
   ${grid}<rect x="${cx}" y="54" width="${cw}" height="252" fill="none" stroke="#56606a"/>
   <text x="${cx+6}" y="70" font-size="13" class="mono" fill="#ffd400">1</text>${s.scale?`<text x="${cx+cw-8}" y="70" font-size="13" class="mono" fill="#cfd6dc" text-anchor="end">${esc(s.scale)}</text>`:""}
-  ${tr}${meas}
+  ${tr}<g class="k" data-k="mread">${s.meas.length?`<rect class="kb" x="${cx+2}" y="${294-(s.meas.length-1)*20-16}" width="170" height="${(s.meas.length-1)*20+24}" fill="none"/>`:""}${meas}</g>
   ${key("power",26,322,46,28,"⏻",{fill:"#d6dadf",fs:15})}${key("autoscale",486,48,72,30,"Auto Scale",Object.assign({fs:11},K))}${key("runstop",570,48,72,30,"Run/Stop",{fs:11,fill:"#7bd88f"})}${key("single",654,48,72,30,"Single",Object.assign({fs:11},K))}
   ${key("meas",486,94,72,30,"Meas",Object.assign({fs:11},K))}${key("cursors",570,94,72,30,"Cursors",Object.assign({fs:11},K))}${key("default",654,94,72,30,"Default Setup",Object.assign({fs:9},K))}
+  <text x="690" y="150" font-size="11" fill="#444" text-anchor="middle">Cursor</text>${knob("cknob",690,180,18,"#d6dadf","#6d757d")}
   <text x="560" y="150" font-size="11" fill="#444" text-anchor="middle">Horizontal</text>${knob("hknob",560,180,22,"#d6dadf","#6d757d")}
   <text x="520" y="232" font-size="11" fill="#444" text-anchor="middle">Vertical</text>
   ${knob("vknob1",520,256,20,"#ffe25a","#8b7a10")}
@@ -489,8 +534,8 @@ function estop(){
     <ellipse cx="180" cy="100" rx="68" ry="12" fill="#a51414"/>
     <path d="M150 74 a34 10 0 0 1 60 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" marker-end="url(#ah)"/>
   </g></g>
-  <text x="270" y="60" font-size="12" fill="#e8ebeb" class="mono">PRESS = STOP</text>
-  <text x="270" y="78" font-size="12" fill="#e8ebeb" class="mono">TWIST ↻ = RELEASE</text>
+  <text x="270" y="60" font-size="13" font-weight="700" fill="#ff6b5e" class="mono">PRESS = OFF</text>
+  <text x="270" y="80" font-size="13" font-weight="700" fill="#5fd18a" class="mono">ROTATE ↻ = ON</text>
   <path d="M266 64 L236 76" stroke="#e8ebeb" stroke-width="2" marker-end="url(#ah)"/>
   </svg>`;
 }
@@ -516,13 +561,17 @@ function wiring(){
   <g class="k" data-k="supply"><rect class="kb" x="14" y="40" width="210" height="44" rx="4" fill="#17191b" stroke="#000" stroke-width="2"/>
     <rect x="44" y="48" width="92" height="28" rx="2" fill="#050807"/><text x="52" y="67" font-size="12" class="mono" fill="#3cf0b0">40.000V</text>
     ${Array.from({length:12},(_,i)=>`<rect x="${160+(i%6)*9}" y="${50+Math.floor(i/6)*12}" width="5" height="5" rx="1" fill="#eceeee"/>`).join("")}</g>
-  ${lbl(14,104,"DC SUPPLY · REAR TERMINALS")}
+  ${lbl(14,104,"DC SUPPLY")}
   <g class="k" data-k="afg"><rect class="kb" x="14" y="300" width="210" height="62" rx="6" fill="#e7e3d7" stroke="#a9a493" stroke-width="2"/>
     <rect x="24" y="310" width="96" height="42" rx="2" fill="#1d4fa6"/><circle cx="190" cy="342" r="9" fill="#d9b23a"/></g>
-  ${lbl(14,382,"SIGNAL GENERATOR · OUT1")}
+  ${lbl(14,382,"GENERATOR · OUT1, ALLIGATOR CLIPS")}
   <g class="k" data-k="cdc"><path class="kb" d="M224 58 H270 V178 H318" fill="none" stroke="#e5484d" stroke-width="5"/>
     <path d="M224 72 H256 V192 H318" fill="none" stroke="#0b0d0e" stroke-width="5"/></g>
-  <g class="k" data-k="csig"><path class="kb" d="M199 342 H262 V286 H318" fill="none" stroke="#0b0d0e" stroke-width="6"/></g>
+  <g class="k" data-k="csig"><path class="kb" d="M262 330 C272 318,252 310,262 298 C272 286,282 292,300 286 H312" fill="none" stroke="#e5484d" stroke-width="4"/>
+    <path d="M262 330 C252 318,272 310,262 298 C252 286,282 282,300 290 H312" fill="none" stroke="#0b0d0e" stroke-width="4"/>
+    <path d="M190 342 H230 L246 336" fill="none" stroke="#e5484d" stroke-width="3"/><path d="M190 346 H230 L246 352" fill="none" stroke="#0b0d0e" stroke-width="3"/>
+    <path d="M244 330 l16 -4 l2 6 l-16 4z" fill="#e5484d"/><path d="M244 350 l16 -6 l2 6 l-16 6z" fill="#3a3f43"/>
+    <path d="M260 330 L266 332 M260 346 L266 340" stroke="#c9ced1" stroke-width="3"/></g>
   <path d="M300 120 H600 L620 140 V330 L600 350 H300 L280 330 V140 Z" fill="#e9ecec"/>
   <rect x="318" y="150" width="244" height="150" rx="4" fill="#1f6a3d"/>
   <rect x="330" y="160" width="220" height="40" rx="3" fill="#cfd6da" opacity=".5"/>
@@ -530,12 +579,12 @@ function wiring(){
   <rect x="440" y="220" width="34" height="34" rx="3" fill="#141618"/><rect x="480" y="220" width="34" height="34" rx="3" fill="#141618"/>
   <text x="380" y="285" font-size="13" font-weight="700" fill="#e9f6ee" letter-spacing="1.5">AC SOURCE V1</text>
   <g class="k" data-k="dcin"><rect class="kb" x="310" y="172" width="22" height="26" rx="3" fill="#f2c230" stroke="#7a5a00" stroke-width="1.5"/></g>
-  <g class="k" data-k="sigin"><circle class="kb" cx="322" cy="286" r="10" fill="#d9b23a" stroke="#7a5a00" stroke-width="1.5"/></g>
+  <g class="k" data-k="sigin"><rect class="kb" x="310" y="278" width="22" height="16" rx="2" fill="#f4f4f0" stroke="#8a8a80" stroke-width="1.5"/></g>
   <g class="k" data-k="out"><rect class="kb" x="550" y="212" width="22" height="26" rx="3" fill="#f2c230" stroke="#7a5a00" stroke-width="1.5"/></g>
   <g class="k" data-k="estop"><path class="kb" d="M300 352 H380 V394 H300 Z" fill="#ff6a1a"/><path d="M300 352 L310 342 H390 L380 352 Z" fill="#ff8a3d"/>
     <rect x="320" y="330" width="18" height="14" fill="#c9ced1"/><ellipse cx="329" cy="330" rx="20" ry="8" fill="#d81f1f"/></g>
   ${lbl(300,412,"E-STOP")}
-  ${lbl(330,145,"DC IN")} ${lbl(560,145,"OUT","end")} ${lbl(340,318,"SIG IN")}
+  ${lbl(330,145,"DC IN · XT90")} ${lbl(560,145,"OUT","end")} ${lbl(340,318,"SIG IN · JST")}
   <g class="k" data-k="wire"><path class="kb" d="M572 225 H860 V320" fill="none" stroke="#d07a3a" stroke-width="8" stroke-linejoin="round"/>
     <path d="M660 225 l16 -8 v16z" fill="#d07a3a"/></g>
   ${lbl(640,205,"WIRE / BUS BAR UNDER TEST")}
@@ -545,192 +594,200 @@ function wiring(){
   ${lbl(765,450,"0.2 Ω LOAD · 800 W","middle")}
   <path d="M672 340 H640 V240 H572" fill="none" stroke="#d07a3a" stroke-width="8" stroke-linejoin="round"/>
   <path d="M860 320 V336 H870" fill="none" stroke="#d07a3a" stroke-width="8"/>
-  <g class="k" data-k="probe"><path class="kb" d="M700 404 V436 H610" fill="none" stroke="#e2b400" stroke-width="3"/><circle cx="700" cy="404" r="5" fill="#e2b400"/></g>
+  <g class="k" data-k="probe"><path class="kb" d="M572 246 H600 V436 H612" fill="none" stroke="#e2b400" stroke-width="3"/><circle cx="572" cy="246" r="5" fill="#e2b400"/><text x="608" y="270" font-size="11" fill="#e2b400" class="mono">PROBE: OUT TEST PIN</text></g>
   <g class="k" data-k="scope"><rect class="kb" x="420" y="410" width="190" height="52" rx="4" fill="#e9ebee" stroke="#9aa3ab" stroke-width="2"/>
     <rect x="428" y="416" width="92" height="40" rx="2" fill="#05080a"/><path d="M432 436 C446 420,456 420,470 436 S494 452,516 436" fill="none" stroke="#ffd400" stroke-width="2"/></g>
-  ${lbl(622,440,"SCOPE CH1")}
+  ${lbl(415,440,"SCOPE CH1","end")}
   </svg>`;
 }
 
 /* ---------- content ---------- */
-const AMP=[[1.8,1.64,4.1,40],[3.0,2.74,6.9,61],[4.0,3.65,9.1,78],[5.0,4.57,11.4,95],[6.0,5.48,13.7,113],[6.6,6.03,15.1,123]];
+/* measured at 10 kHz, probe at the buffer OUT: [generator Vpp, scope Pk-Pk V, supply W] */
+const AMP=[[1.8,1.64,40],[3.0,2.74,61],[4.0,3.65,78],[5.0,4.57,95],[6.0,5.48,113],[6.6,6.03,123]];
 const seq=(...k)=>`<div class="seq">${k.map(x=>x==="→"?`<span class="ar">→</span>`:`<kbd>${x}</kbd>`).join("")}</div>`;
 const alert=(tag,html)=>`<div class="alert"><span class="tag">${tag}</span><div>${html}</div></div>`;
-const ampTable=`<div class="tw"><table><thead><tr><th>Gen</th><th class="r">Scope</th><th class="r">I pk</th><th class="r">I rms</th><th class="r">Supply</th></tr></thead><tbody>
-  ${AMP.map(r=>`<tr class="${r[0]===6.6?'lim':''}"><td class="r" style="text-align:left;padding-left:0">${r[0].toFixed(1)} Vpp</td><td class="r">${r[1].toFixed(2)} V</td><td class="r">${r[2].toFixed(1)} A</td><td class="r">${(r[2]/Math.SQRT2).toFixed(1)} A</td><td class="r">${r[3]} W</td></tr>`).join("")}
-  </tbody></table></div><p style="font-size:.8rem;color:var(--mute)">Measured at 10 kHz.</p>`;
+const Z10=Math.hypot(0.2,2*Math.PI*10e3*0.55e-6);
+const ampTable=`<div class="tw"><table class="nw"><thead><tr><th>Gen</th><th class="r">Scope</th><th class="r">I pk</th><th class="r">I rms</th><th class="r">Supply</th></tr></thead><tbody>
+  ${AMP.map(r=>{const ip=r[1]/2/Z10; return `<tr class="${r[0]===6.6?'lim':''}"><td class="r" style="text-align:left;padding-left:0">${r[0].toFixed(1)} Vpp</td><td class="r">${r[1].toFixed(2)} V</td><td class="r">${ip.toFixed(1)} A</td><td class="r">${(ip/Math.SQRT2).toFixed(1)} A</td><td class="r">${r[2]} W</td></tr>`;}).join("")}
+  </tbody></table></div><p style="font-size:.8rem;color:var(--mute)">Measured at 10 kHz, probe at the buffer OUT. I pk = (Pk-Pk ÷ 2) ÷ |Z|, |Z| = ${(Z10*1000).toFixed(0)} mΩ.</p>`;
+const zTable=`<div class="tw"><table class="nw"><thead><tr><th>Frequency</th><th class="r">|Z|</th><th class="r">Pk-Pk per 1 A pk</th></tr></thead><tbody>
+  ${[10,20,30,40,50].map(f=>{const z=Math.hypot(0.2,2*Math.PI*f*1e3*0.55e-6); return `<tr><td>${f} kHz</td><td class="r">${(z*1000).toFixed(0)} mΩ</td><td class="r">${(2*z*1000).toFixed(0)} mV</td></tr>`;}).join("")}
+  </tbody></table></div><p style="font-size:.8rem;color:var(--mute)">0.2 Ω load, 0.55 µH loop inductance.</p>`;
+/* small line icons for list steps */
+const IC={
+  sine:`<svg viewBox="0 0 24 24"><path d="M2 12c2.5-8 5.5-8 8 0s5.5 8 8 0c1-3 2-4.5 3-5"/></svg>`,
+  hot:`<svg viewBox="0 0 24 24"><path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z"/><path d="M12 9v7"/><path d="M17 6h3M17 10h3"/></svg>`,
+  hand:`<svg viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M11 10V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M14 10.5V6a1.5 1.5 0 0 1 3 0v7.5c0 4-2.5 7-6 7s-5-2-6.5-4.5L3 13a1.5 1.5 0 0 1 2.5-1.5L8 14"/><path d="M3 3l18 18"/></svg>`,
+  esd:`<svg viewBox="0 0 24 24"><rect x="4" y="8" width="9" height="8" rx="3"/><path d="M13 12h3l2-3 2 6 1-3h2"/><path d="M6 8V6M11 8V6M6 16v2M11 16v2"/></svg>`,
+  short:`<svg viewBox="0 0 24 24"><path d="M4 8h5M15 8h5M4 16h16"/><path d="M12 4l-2 4h4l-2 4"/></svg>`,
+  therm:`<svg viewBox="0 0 24 24"><path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z"/><path d="M12 9v7"/></svg>`,
+  fan:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-6 4-6 2 0 2 3 0 5M14 12c4 0 6 1 6 4 0 2-3 2-5 0M12 14c0 4-1 6-4 6-2 0-2-3 0-5M10 12c-4 0-6-1-6-4 0-2 3-2 5 0"/></svg>`,
+  smoke:`<svg viewBox="0 0 24 24"><path d="M8 20c-2-2 0-4-1-6s-2-3 0-5M13 20c-2-2 0-4-1-6s-2-3 0-5M18 20c-2-2 0-4-1-6s-2-3 0-5"/><path d="M5 4l1.5 2M12 2v2.5M19 4l-1.5 2"/></svg>`,
+  gun:`<svg viewBox="0 0 24 24"><path d="M3 7h13l3 3v2h-6l-1 2h-2v5H7v-5H3z"/><path d="M19 9h2M19 11h2"/></svg>`
+};
+const rl=(items)=>`<div class="rl">${items.map(([ic,cls,h,t])=>`<div class="ri ${cls||''}"><span class="ico">${IC[ic]}</span><div><b>${h}</b><span>${t}</span></div></div>`).join("")}</div>`;
+const stat=(rows)=>`<div class="tw"><table><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="r">${r[1]}</td></tr>`).join("")}</tbody></table></div>`;
+const EMERG=rl([["smoke","bad","Smoke, burning smell, spark or unusual sound","Press the E-STOP immediately."]]);
+const GEN0=[["Waveform","Sine"],["Frequency","10.000 kHz"],["Amplitude","700 mVpp"],["Offset","20 mV"],["Load","High Z"],["Out1","Off"]];
+const limit=`<div class="lim6"><span>Never exceed</span><b>6.6 Vpp</b></div>`;
 
 const S=[
 {id:"home", sec:"Session", home:true, title:"AC Current Source V1", body:``},
 
 /* ===================== RUN FLOW ===================== */
 {id:"intro", only:"beg", sec:"Before you start", title:"What you need",
-  body:`<div class="tw"><table><tbody>
-  <tr><td>DC supply</td><td class="r">ITECH IT-M3904C-80-80</td></tr>
-  <tr><td>Signal generator</td><td class="r">Tektronix AFG1062</td></tr>
-  <tr><td>Oscilloscope</td><td class="r">Keysight DSOX3054T, 10:1 probe</td></tr>
-  <tr><td>Current source</td><td class="r">AC Current Source V1, with E-STOP</td></tr>
-  <tr><td>Load</td><td class="r">0.2 Ω load unit, 800 W max</td></tr>
-  <tr><td>Under test</td><td class="r">Wire or bus bar, Hall sensor</td></tr>
-  <tr><td>Also</td><td class="r">IR thermometer or thermal camera</td></tr></tbody></table></div>
-  <p style="margin-top:18px"><b>Output:</b> sine, <span class="v">10–50 kHz</span>, up to <span class="v">15 A peak</span>.</p>`},
-{id:"rules", only:"beg", sec:"Before you start", title:"Two rules",
-  body:`${alert("RULE","Bring the generator to <b>0.700 Vpp</b> before any output is switched on or off. A sudden step into an inductive loop is what the source dislikes most.")}
-  ${alert("WARNING","Parts inside the source reach ~90 °C at full current. Do not touch it while running, and never short OUT.")}`,
-  checks:["I have read both."]},
+  body:`${stat([["DC supply","ITECH IT-M3904C-80-80"],["Signal generator","Tektronix AFG1062"],["Oscilloscope","Keysight DSOX3054T"],["Scope probe","10:1, hook tip and ground clip"],
+  ["Current source","AC Current Source V1"],["Load","0.2 Ω load unit, 800 W"],["Under test","Wire or bus bar, Hall sensor"],["Also","ESD wrist strap, IR thermometer"]])}
+  <div class="tw" style="margin-top:18px"><table><tbody><tr><td>Output</td><td class="r">Sine, 10–50 kHz</td></tr><tr><td>Maximum</td><td class="r">≈ 15 A peak at 10 kHz</td></tr></tbody></table></div>`},
+{id:"rules", only:"beg", sec:"Before you start", title:"Safety rules",
+  body:`${EMERG}${rl([
+    ["sine","",`Generator Out1 on only at 700 mVpp`,`A sudden current step into an inductive loop is what the source dislikes most.`],
+    ["hand","bad",`NEVER touch any PCB during operation`,`It can disturb the output current and damage the board.`],
+    ["short","",`Do not short OUT`,`Take care when installing a bus bar or tools near OUT. Never connect a multimeter in current (ammeter) mode across it.`],
+    ["hot","",`Hot parts`,`Parts inside the source reach ~90 °C at full current.`],
+    ["esd","",`Wear an ESD wrist strap`,`At all times while working at the bench.`]])}`,
+  checks:["I have read and understood all the above instructions."]},
 {id:"remind", only:"exp", sec:"Before you start", title:"Operating limits",
-  body:`<div class="tw"><table><tbody>
-  <tr><td>Supply</td><td class="r">ITECH IT-M3904C-80-80</td></tr><tr><td>Load</td><td class="r">0.2 Ω · 800 W max</td></tr><tr><td>Frequency</td><td class="r">10–50 kHz</td></tr><tr><td>Setpoints</td><td class="r">40 V · I+ 5 A · OVP 45 V</td></tr><tr><td>Idle draw</td><td class="r">≈ 0.25 A · 10 W</td></tr>
-  <tr><td>Generator</td><td class="r">Sine · High Z</td></tr><tr><td>Switching amplitude</td><td class="r">0.700 Vpp</td></tr><tr><td>Max amplitude</td><td class="r">6.6 Vpp → 15 A pk</td></tr>
-  <tr><td>Current</td><td class="r">I pk = Pk-Pk / 0.4</td></tr><tr><td>Temperature stop</td><td class="r">85 °C</td></tr></tbody></table></div>`,
+  body:`${EMERG}${stat([["Supply","40 V · 3.5 A"],["Idle draw","≈ 0.26 A · 0.010 kW"],["At 700 mVpp","≈ 0.52 A · 0.021 kW"],["Load","0.2 Ω · 800 W max"],["Frequency","10–50 kHz"],
+  ["Generator","Setup 0: sine · 10 kHz · 700 mVpp · 20 mV · High Z"],["Out1 on","only at 700 mVpp"],["Max amplitude","<b>6.6 Vpp</b>"],["Current","I pk = (Pk-Pk ÷ 2) ÷ |Z|"],["Offset","±5 mV at 10 kHz, 700 mVpp, cursors"],["Hotspot stop","85 °C"]])}
+  ${rl([["hand","bad","NEVER touch any PCB during operation","Wear an ESD strap at all times."]])}`,
   checks:["Limits noted."]},
 {id:"estop", only:"beg", sec:"Before you start", title:"Emergency stop", fig:"estop", hl:["estop"],
-  body:`<p>Red button on the orange box, beside the source.</p><ul><li><b>Press</b> to switch the source off immediately.</li><li><b>Twist clockwise</b> to release it.</li><li>Normal state: <b>released</b> (up). Use only in an emergency.</li></ul>`,
-  checks:["E-STOP located and released."]},
+  body:`<div class="states"><div class="st off"><span>Press</span><b>OFF</b></div><div class="st on"><span>Release (rotate clockwise)</span><b>ON</b></div></div>
+  <p>Keep it released (ON) for normal use.</p>${EMERG}`,
+  checks:["I know where the E-STOP is, and it is released (ON)."]},
 
-{id:"off", only:"beg", sec:"Wiring", title:"Outputs off", fig:"wiring", hl:["supply","afg"],
-  body:`<p>Supply <kbd>On/Off</kbd> dark. Generator Out1 light dark.</p>`,
-  checks:["Supply output off.","Generator Out1 off."]},
-{id:"loop", only:"beg", sec:"Wiring", title:"Connect the current loop", fig:"wiring", hl:["out","wire","rload"],
-  body:`<p><b>OUT</b> → wire under test → <b>0.2 Ω load</b> → back to OUT. Tight joints, short return path.</p><p>Keep the load's fan and fins unobstructed.</p>`,
-  more:[["Why",`<p>A loose joint at 15 A becomes a small heater, and its resistance drifts. A large loop adds inductance, which lowers the current at 50 kHz. <em>Physics does not negotiate.</em></p>`],["About the load",`<p>Four 0.2 Ω, 200 W resistors in series-parallel: 0.2 Ω overall, up to 800 W, on a fan-cooled heatsink. At 15 A peak it dissipates only about 23 W.</p>`]],
-  checks:["Loop closed through the load, joints tight."]},
-{id:"sensor", only:"beg", sec:"Wiring", title:"Mount the Hall sensor", fig:"wiring", hl:["sensor"],
-  body:`<p>On the straight section, away from bends and the return conductor. Clamp it in place.</p>`},
-{id:"probe", only:"beg", sec:"Wiring", title:"Probe across the load", fig:"wiring", hl:["probe","rload","scope"],
-  body:`<p>10:1 probe on <b>CH1</b>, across the load terminals: tip on the OUT side, ground on the other. Use the short ground spring.</p>`,
-  more:[["Why the spring",`<p>The long ground clip picks up 20–80 MHz ringing that isn't really there. <em>It cost a week of debugging once; no need to repeat it.</em></p>`]],
-  checks:["CH1 across the load with the short ground spring."]},
-{id:"sig", only:"beg", sec:"Wiring", title:"Generator to SIG IN", fig:"wiring", hl:["afg","csig","sigin"],
-  body:`<p>BNC from generator <b>Out1</b> to <b>SIG IN</b>. Route it away from the current loop.</p>`},
-{id:"dc", only:"beg", sec:"Wiring", title:"Supply to DC IN", fig:"wiring", hl:["supply","cdc","dcin"],
-  body:`<p>Rear terminals to <b>DC IN</b>: red to +, black to −. Wire rated ≥ 5 A.</p>${alert("CAUTION","Reverse polarity damages the source.")}`,
-  checks:["Polarity verified.","Supply output still off."]},
-{id:"wiring", only:"exp", sec:"Wiring", title:"Wiring check", fig:"wiring", hl:["dcin","sigin","wire","sensor","rload","probe","estop"],
+/* --- wiring inspection: everything is already connected, only verify --- */
+{id:"off", only:"beg", sec:"Wiring inspection", title:"Inspect the wiring", fig:"wiring", hl:["supply","afg","scope"],
+  body:`<p>Everything is already wired. The next steps only check it, with the instruments off.</p>${stat([["Supply","off"],["Generator","off"],["Oscilloscope","off"]])}`,
+  checks:["Supply, generator and scope are off."]},
+{id:"loop", only:"beg", sec:"Wiring inspection", title:"Current loop", fig:"wiring", hl:["out","wire","rload"],
+  body:`<p><b>OUT</b> → wire under test → <b>0.2 Ω load</b> → back to OUT.</p>${stat([["Joints","tight, no loose strands"],["Load fan and fins","unobstructed"]])}`,
+  more:[["Why",`<p>A loose joint at 15 A heats up and its resistance drifts. A larger loop adds inductance, which lowers the current at higher frequencies.</p>`],["About the load",`<p>Four 0.2 Ω, 200 W resistors in series-parallel: 0.2 Ω overall, up to 800 W, on a fan-cooled heatsink.</p>`]],
+  checks:["Loop connected, joints tight.","Fan and fins clear."]},
+{id:"sensor", only:"beg", sec:"Wiring inspection", title:"Hall sensor", fig:"wiring", hl:["sensor"],
+  body:`${stat([["Position","straight section of the wire"],["Away from","bends and the return conductor"],["Mounting","clamped, cannot move"]])}`,
+  checks:["Sensor clamped on the straight section."]},
+{id:"probe", only:"beg", sec:"Wiring inspection", title:"Scope probe", fig:"wiring", hl:["probe","out","scope"],
+  body:`${stat([["Channel","CH1"],["Hook tip","test pin (male header) beside the OUT XT90"],["Ground clip","black wire of the OUT XT90"],["Ratio","10:1"]])}
+  ${alert("NOTE","Probe at the <b>source side</b>, not at the load. The long wires to the load are part of the measured impedance.")}`,
+  more:[["Probe changed?",`<p>Only if someone replaced the probe: set CH1 probe ratio to <b>10:1</b> on the scope.</p>`]],
+  checks:["Hook on the test pin, ground clip on the XT90 black wire."]},
+{id:"sig", only:"beg", sec:"Wiring inspection", title:"Signal input", fig:"wiring", hl:["afg","csig","sigin"],
+  body:`<p>Twisted red/black pair from <b>SIG IN</b> (JST on the PCB). Its bare ends connect to generator Out1 with two alligator clips.</p>
+  ${stat([["Red clip","red wire (signal)"],["Black clip","black wire (ground)"],["Clips","not touching each other"]])}`,
+  checks:["Red to red, black to black, clips apart."]},
+{id:"dc", only:"beg", sec:"Wiring inspection", title:"DC input", fig:"wiring", hl:["supply","cdc","dcin"],
+  body:`<p>Supply to <b>DC IN</b> through the <b>XT90</b> connector. It only fits one way, so polarity is fixed.</p>`,
+  checks:["XT90 fully seated."]},
+{id:"wiring", only:"exp", sec:"Wiring inspection", title:"Wiring check", fig:"wiring", hl:["dcin","sigin","wire","sensor","rload","probe","estop"],
   body:``,
-  checks:["Supply and generator outputs off.","OUT → wire → load → OUT, joints tight.","Hall sensor clamped.","Scope CH1 across the load, short ground spring.","Out1 → SIG IN.","Supply → DC IN, polarity verified.","E-STOP released."]},
+  checks:["Supply, generator and scope off.","OUT → wire → load → OUT, joints tight.","Hall sensor clamped.","Probe hook on the OUT test pin, ground clip on the XT90 black wire.","SIG IN clips: red to red, black to black.","XT90 seated.","E-STOP released (ON)."]},
 
 /* --- 1. supply --- */
-{id:"iton", sec:"Supply", title:"Power on the supply", fig:"itech", hl:["power"], scr:{},
-  body:`${seq("Power")}<p>Initialises in ~30 s. Expect CV mode, output OFF.</p>`},
-{id:"itcheck", choice:"it", sec:"Supply", title:"Check supply settings", fig:"itech", hl:["vset","iset","protect","esc"], scr:{line:"Vset = 40.000 V",line2:"I+ = 5.000 A"},
-  body:`<div class="tw"><table><tbody>
-  <tr><td><kbd>V-set</kbd></td><td class="r">40.000 V</td></tr><tr><td><kbd>I-set</kbd></td><td class="r">I+ 5.000 A</td></tr>
-  <tr><td><kbd>Protect</kbd></td><td class="r">OVP On · 45 V</td></tr><tr><td><kbd>Esc</kbd></td><td class="r">exit, no changes</td></tr>
-  <tr><td><kbd>On/Off</kbd></td><td class="r">dark (output off)</td></tr></tbody></table></div>
-`,
-  options:[["match","Matches, output off","Continue to the generator."],["change","Different","Show the supply setup steps."]]},
+{id:"iton", sec:"Power on", title:"Power on the supply", fig:"itech", hl:["power"], scr:{},
+  body:`${seq("Power")}<p>Initialises in ~30 s. The output stays <b>OFF</b>.</p>`,
+  checks:["Supply on, output off."]},
+{id:"itcheck", choice:"it", sec:"Power on", title:"Check supply settings", fig:"itech", hl:["vset","iset"], scr:{line:"Vset = 40.000 V",line2:"I+ = 3.500 A"},
+  body:`${stat([["<kbd>V-set</kbd>","40.000 V"],["<kbd>I-set</kbd>","I+ 3.500 A"],["Output","off"]])}`,
+  options:[["match","Matches, output off","Continue to the generator.","pri"],["change","Different","Show the supply setup steps.","alt"]]},
 {id:"vset", group:"it", sec:"Supply setup", title:"Voltage 40 V", fig:"itech", hl:["vset","n4","n0","enter"], scr:{line:"Vset = 40.000 V",line2:"CV priority"},
   body:`${seq("V-set","→","4","0","→","Enter")}`,
-  more:[["Why 40 V",`<p>The source accepts 36–75 V and starts above ~34 V. 40 V leaves margin for cable drop. <em>42 V also works, but that number is already taken.</em></p>`]],
   checks:["Setpoint 40.000 V."]},
-{id:"iset", group:"it", sec:"Supply setup", title:"Current limit 5 A", fig:"itech", hl:["iset","n5","enter"], scr:{line:"I+ = 5.000 A",line2:"press I-set again: I− (leave)"},
-  body:`${seq("I-set","→","5","→","Enter")}<p>Sets I+. Leave I− unchanged.</p>`,
-  more:[["Why 5 A",`<p>Full output draws ~3.1 A at 40 V. 5 A covers start-up inrush and limits fault energy. <em>A seatbelt that has never been needed. Keep it that way.</em></p>`]],
-  checks:["Limit 5.000 A."]},
-{id:"ovp", group:"it", sec:"Supply setup", title:"OVP 45 V", fig:"itech", hl:["protect","knob","enter","n4","n5","esc"], scr:{line:"1. OVP  On",line2:"Level 45.000 V"},
-  body:`<ol><li><kbd>Protect</kbd></li><li>Knob → <b>1. OVP</b> → <kbd>Enter</kbd> → <b>On</b> → <kbd>Enter</kbd></li><li><kbd>4</kbd><kbd>5</kbd> <kbd>Enter</kbd>, delay <kbd>Enter</kbd></li><li><kbd>Esc</kbd></li></ol>`,
-  more:[["Why",`<p>Protects the source (75 V max) from a mistyped setpoint. <em>400 V is only one extra zero away.</em></p>`]],
-  checks:["OVP on at 45 V, output still off."]},
+{id:"iset", group:"it", sec:"Supply setup", title:"Current limit 3.5 A", fig:"itech", hl:["iset","n3","ndot","n5","enter"], scr:{line:"I+ = 3.500 A",line2:"press I-set again: I− (leave)"},
+  body:`${seq("I-set","→","3",".","5","→","Enter")}<p>Sets I+. Leave I− unchanged.</p>`,
+  checks:["Limit 3.500 A, output still off."]},
 
 /* --- 2. generator --- */
-{id:"afgon", sec:"Generator", title:"Power on the generator", fig:"afg", hl:["power"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z"},
-  body:`${seq("⏻")}<p>Wait for the main screen. Leave Out1 off.</p>`},
-{id:"afgcheck", choice:"afg", sec:"Generator", title:"Check generator settings", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",offset:"0 mV",load:"High Z"},
-  body:`<div class="tw"><table><tbody>
-  <tr><td>Waveform</td><td class="r">Sine</td></tr><tr><td>Frequency</td><td class="r">10.000 kHz</td></tr><tr><td>Amplitude</td><td class="r">0.700 Vpp</td></tr>
-  <tr><td>Offset</td><td class="r">0 mV / noted value</td></tr><tr><td>Load</td><td class="r">High Z</td></tr><tr><td>Out1</td><td class="r">Off</td></tr></tbody></table></div>`,
-  more:[["Resets every power-on?",`<p>If it always starts at 1 kHz, 1 Vpp, 50 Ω: Utility → System → Power On → <b>Last</b>.</p>`]],
-  options:[["match","Matches, output off","Continue to the scope."],["change","Different","Show the generator setup steps."]]},
-{id:"freq1", group:"afg", sec:"Generator setup", title:"Sine, 10 kHz", fig:"afg", hl:["sine","bz0","n1","n0"], scr:{freq:"1.000 000 00 kHz",ampl:"1.000 Vpp"},
-  body:`${seq("Sine","→","Freq/Period","→","1","0")}`},
-{id:"freq2", group:"afg", sec:"Generator setup", title:"Unit: kHz", fig:"afg", hl:["bz1"], scr:{freq:"10.000 000 00 kHz",bezel:["MHz","kHz","Hz","mHz","Cancel"],ampl:"1.000 Vpp"},
-  body:`${seq("kHz")}<p>Screen: <span class="v">10.000 000 00 kHz</span></p>`},
-{id:"util", group:"afg", sec:"Generator setup", title:"Output setup menu", fig:"afg", hl:["utility","bz1"], scr:{menu:"Utility",menuLines:["Press the side key","labelled Output Setup"],bezel:["·","Output Setup","·","·","·"]},
-  body:`${seq("Utility","→","Output Setup")}<p style="color:var(--mute);font-size:.9rem">Select the side key by its label; position can vary with firmware.</p>`},
-{id:"load", group:"afg", sec:"Generator setup", title:"Load: High Z", fig:"afg", hl:["bz0"], scr:{menu:"Output Setup",menuLines:["CH1 Load :  High Z","CH2 Load :  50 Ω"],bezel:["CH1Load","CH2Load","·","·","Return"]},
-  body:`${seq("CH1Load")}<p>Press until it reads <span class="v">High Z</span>.</p>`,
-  more:[["Why",`<p>The source input is 1 kΩ. With the 50 Ω setting the real amplitude is twice the displayed value. <em>The generator isn't lying; it just assumes a 50 Ω load.</em></p>`]],
-  checks:["Main screen shows Load: High Z."]},
-{id:"amp1", group:"afg", sec:"Generator setup", title:"Amplitude 0.7", fig:"afg", hl:["bz2","n0","ndot","n7"], scr:{freq:"10.000 000 00 kHz",ampl:"1.000 Vpp",load:"High Z"},
-  body:`${seq("Ampl/High","→","0",".","7")}`},
-{id:"amp2", group:"afg", sec:"Generator setup", title:"Unit: Vpp", fig:"afg", hl:["bz0"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",offset:"0 mV",load:"High Z",bezel:["Vpp","mVpp","Vrms","mVrms","Cancel"]},
-  body:`${seq("Vpp")}<p>Confirm offset <span class="v">0 mV</span>. If not: <kbd>Offset/Low</kbd> <kbd>0</kbd> <kbd>mV</kbd>.</p>`,
-  checks:["0.700 Vpp, 0 mV, Out1 off."]},
+{id:"afgon", sec:"Power on", title:"Power on the generator", fig:"afg", hl:["power"], scr:{freq:"10.000 000 00 kHz",ampl:"700.000 mVpp",offset:"20 mV",load:"High Z"},
+  body:`${seq("⏻")}<p>Wait for the main screen. Leave Out1 <b>off</b>.</p>`},
+{id:"afgcheck", choice:"afg", sec:"Power on", title:"Check generator settings", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"700.000 mVpp",offset:"20 mV",load:"High Z"},
+  body:`${stat(GEN0)}`,
+  options:[["match","Matches, output off","Continue to the scope.","pri"],["change","Different","Recall the saved setup.","alt"]]},
+{id:"recall", group:"afg", sec:"Generator setup", title:"Recall Setup 0", fig:"afg", hl:["utility","bz1"], scr:{menu:"Utility",menuLines:["Recall  ›  Setup 0"],bezel:["·","Recall","·","·","Return"]},
+  body:`${seq("Utility","→","Recall","→","Setup 0")}<p>Setup 0 holds every setting below, including the 20 mV offset.</p><p style="color:var(--mute);font-size:.9rem">Pick the side key by its label; the position can vary with firmware.</p>`,
+  checks:["Setup 0 recalled."]},
+{id:"verify", group:"afg", sec:"Generator setup", title:"Verify the screen", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"700.000 mVpp",offset:"20 mV",load:"High Z"},
+  body:`${stat(GEN0)}<p style="color:var(--mute);font-size:.9rem">Still different? Stop and report to the setup owner.</p>`,
+  checks:["Every value on the screen matches."]},
 
 /* --- 3. scope --- */
-{id:"dsoon", sec:"Oscilloscope", title:"Power on the scope", fig:"scope", hl:["power"], scr:{trace:"none"},
-  body:`${seq("⏻")}<p>Wait for the graticule. Probe stays on CH1 across the 0.2 Ω.</p>`},
-{id:"dsoscale", sec:"Oscilloscope", title:"Set scales", fig:"scope", hl:["ch1","vknob1","hknob","meas"], scr:{trace:"none",scale:"200 mV/div   20 µs/div"},
-  body:`<div class="tw"><table><tbody>
-  <tr><td>CH1</td><td class="r">DC · 10:1 · 200 mV/div</td></tr><tr><td>Horizontal</td><td class="r">20 µs/div (2 cycles at 10 kHz)</td></tr>
-  <tr><td><kbd>Meas</kbd></td><td class="r">Peak-Peak + Average, CH1</td></tr></tbody></table></div>
-  <p style="color:var(--mute);font-size:.9rem">Go to 1 V/div once the generator is above ~3 Vpp. At 50 kHz, 5 µs/div.</p>`,
-  checks:["Scales and measurements set."]},
+{id:"dsoon", sec:"Power on", title:"Power on the scope", fig:"scope", hl:["power"], scr:{trace:"none"},
+  body:`${seq("⏻")}<p>Wait for the graticule.</p>`},
 
 /* --- 4. power up --- */
-{id:"outon", sec:"Power-up", title:"Supply output on", fig:"itech", hl:["onoff"], scr:{v:"40.000",a:"0.250",w:"10.0",out:true},
-  body:`${seq("On/Off")}<p>Expected idle: <span class="v">40 V · 0.25 A · 10 W</span>, fans running.</p>
-  ${alert("STOP IF","Current &gt; 0.6 A, CC shown, or any smell: E-STOP, then <kbd>On/Off</kbd>.")}`,
-  checks:["Idle ≈ 10 W, fans running."]},
-{id:"scope", sec:"Power-up", title:"Idle trace", fig:"scope", hl:["meas"], scr:{trace:"flat",scale:"200 mV/div   20 µs/div",meas:["Pk-Pk(1): 14 mV","Avg(1): 2 mV"]},
-  body:`<p>Flat line, slightly noisier than with the supply off. That is normal.</p><p>Thick fuzz or a visible waveform with no input: switch the supply output off and open <b>Help</b>.</p>`,
-  checks:["Flat line, only a little noise."]},
+{id:"outon", sec:"Power-up", title:"Supply output on", fig:"itech", hl:["onoff"], scr:{v:"40.000",a:"0.260",w:"0.010",out:true},
+  body:`${seq("On/Off")}${stat([["Voltage","40.000 V"],["Current","≈ 0.26 A"],["Power","≈ 0.010 kW"],["Fans","running"]])}
+  ${alert("STOP IF","Current &gt; 0.6 A, CC shown, smoke, smell, spark or unusual sound: press <b>E-STOP</b>.")}`,
+  checks:["≈ 0.26 A idle, fans running."]},
+{id:"genamp", sec:"Power-up", title:"Confirm 10 kHz, 700 mVpp", fig:"afg", hl:["bz0","bz2"], scr:{freq:"10.000 000 00 kHz",ampl:"700.000 mVpp",offset:"20 mV",load:"High Z"},
+  body:`${stat([["Frequency","10.000 kHz"],["Amplitude","700 mVpp"]])}<p>Both must match before Out1 goes on.</p>`,
+  checks:["10 kHz and 700 mVpp."]},
+{id:"genon", sec:"Power-up", title:"Generator output on", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"700.000 mVpp",offset:"20 mV",load:"High Z",out:true},
+  body:`${seq("Out1 On/Off")}<p>The supply now reads:</p>${stat([["Current","≈ 0.52 A"],["Power","≈ 0.021 kW"]])}`,
+  checks:["Supply ≈ 0.52 A, 0.021 kW."]},
+{id:"autoscale", sec:"Power-up", title:"Auto Scale", fig:"scope", hl:["autoscale"], scr:{trace:"half",amp:0.85,scale:"100 mV/div   20 µs/div"},
+  body:`${seq("Auto Scale")}<p>The screen now shows only half a cycle, from the positive peak to the negative peak.</p>`},
+{id:"hscale", sec:"Power-up", title:"Show full cycles", fig:"scope", hl:["hknob"], scr:{trace:"sine",amp:0.75,scale:"100 mV/div   20 µs/div"},
+  body:`<p>Turn the <b>Horizontal</b> knob until at least one full sine cycle is visible.</p>`,
+  checks:["Full sine cycles visible."]},
+{id:"freeze", sec:"Power-up", title:"Freeze the trace", fig:"scope", hl:["runstop"], scr:{trace:"double",amp:0.75,scale:"100 mV/div   20 µs/div"},
+  body:`<p>Switching noise can make it look like two sines overlapping, 180° apart. Press <kbd>Run/Stop</kbd> to freeze it and see the real waveform.</p>${seq("Run/Stop")}`,
+  checks:["Trace frozen, one clean sine."]},
+{id:"offset", sec:"Power-up", title:"Check output offset", fig:"scope", hl:["cursors","cknob","mread"], scr:{trace:"sine",amp:0.75,cursors:true,scale:"100 mV/div   20 µs/div",meas:["Y2: −318 mV","Y1: +322 mV"]},
+  body:`${stat([["Generator","10 kHz, 700 mVpp only"],["Scope","stopped (Run/Stop)"]])}
+  <ol class="sl"><li>Press <kbd>Cursors</kbd>.</li><li>Put <b>Y1</b> on the positive peak and <b>Y2</b> on the negative peak. Drag them on the touch screen, or use the cursor knob for fine steps.</li><li>Enter both values below.</li></ol>
+  <div class="fx">Offset = (Y1 + Y2) ÷ 2</div>
+  ${stat([["Example","Y1 +322 mV, Y2 −318 mV"],["Offset","(322 − 318) ÷ 2 = +2 mV ✓"],["Limit","±5 mV"]])}`,
+  widget:"offset",
+  more:[["Why cursors",`<p>The scope's automatic Pk-Pk, Max and Min include the switching noise on the sine. Cursors on a frozen trace read the real peaks.</p>`],
+        ["Other frequencies and amplitudes",`<p>This limit applies at 10 kHz, 700 mVpp only. Offset grows with amplitude (verified), and may differ at other frequencies (not verified yet). No relation has been derived yet.</p>`],
+        ["Outside the limit?",`<p>Shut down using <b>Shut down</b> on the home page and report to the setup owner.</p>`]],
+  checks:["Offset within ±5 mV."]},
 
 /* --- 5. run --- */
-{id:"genamp", sec:"Run", title:"Confirm 0.7 Vpp", fig:"afg", hl:["bz2"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z"},
-  body:`<p>Amplitude must read <span class="v">0.700 Vpp</span> before Out1 goes on. If not: <kbd>Ampl/High</kbd> <kbd>0</kbd><kbd>.</kbd><kbd>7</kbd> <kbd>Vpp</kbd>.</p>`,
-  checks:["Amplitude is 0.700 Vpp."]},
-{id:"genon", sec:"Run", title:"Generator output on", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z",out:true},
-  body:`${seq("Out1 On/Off")}<p>Scope: <span class="v">≈ 0.64 Vpp</span>, a clean sine. That is about <span class="v">1.6 A pk</span>.</p>`,
-  checks:["Clean sine on the scope."]},
-{id:"offset", sec:"Run", title:"Null DC offset", fig:"afg", hl:["bz3","knob","left","right"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",offset:"−xx mV",load:"High Z",out:true},
-  body:`<p>Target: <span class="v">Avg(1) within ±5 mV</span></p>${seq("Offset/Low","→","Knob","◀ ▶")}`,
-  more:[["Why",`<p>±5 mV over 0.2 Ω is ±25 mA DC in the wire, which shows up as a sensor offset. The generator stores the value, so next time this takes seconds.</p>`]],
-  checks:["Avg(1) within ±5 mV."]},
-{id:"freq", sec:"Run", title:"Set test frequency", fig:"afg", hl:["bz0","knob"], scr:{freq:"50.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z",out:true},
+{id:"freq", sec:"Run", title:"Set test frequency", fig:"afg", hl:["bz0","knob"], scr:{freq:"50.000 000 00 kHz",ampl:"700.000 mVpp",offset:"20 mV",load:"High Z",out:true},
   body:`${seq("Freq/Period","→","value","→","kHz")}<p>Range <span class="v">10–50 kHz</span>. Adjust the scope time base to match.</p>`,
-  more:[["Note",`<p>Current falls with frequency for the same amplitude: 0.4 µH of loop is already 0.13 Ω at 50 kHz, comparable to the 0.2 Ω. Read current from the scope; the table is a starting point, not a promise.</p>`]]},
-{id:"amp", sec:"Run", title:"Raise amplitude gradually", fig:"afg", hl:["bz2","knob"], scr:{freq:"10.000 000 00 kHz",ampl:"4.000 Vpp",load:"High Z",out:true},
-  body:`${seq("Ampl/High","→","Knob")}<p>Steps of ~0.5 Vpp. Watch the scope and the supply after each.</p><p><b>Limit: <span class="v">6.6 Vpp</span></b></p>`,
-  more:[["Amplitude for a target current","@amp"],["Amplitude table",ampTable]],
+  more:[["Why current falls with frequency",`<p>The loop's 0.55 µH adds 2πfL to the 0.2 Ω. At 50 kHz that is 0.17 Ω, so |Z| rises from 203 to 264 mΩ.</p>${zTable}`]]},
+{id:"amp", sec:"Run", title:"Raise amplitude in 0.1 V steps", fig:"afg", hl:["bz2","left","right","knob"], scr:{freq:"10.000 000 00 kHz",ampl:"800.000 mVpp",offset:"20 mV",load:"High Z",out:true},
+  body:`${limit}<ol class="sl"><li>Press <kbd>Ampl/High</kbd>.</li><li>Move the cursor to the <b>7</b> of 700 mVpp with <kbd>◀</kbd> <kbd>▶</kbd>.</li><li>Turn the knob <b>clockwise</b>, one click at a time: 800, 900 mVpp, 1.000, 1.100 Vpp …</li></ol>
+  <p>After each step, check the scope and the supply.</p>`,
+  widget:"amp",
+  more:[["Amplitude table",ampTable]],
   checks:[`Amplitude will not exceed ${VPP_MAX} Vpp.`]},
 {id:"temp", sec:"Run", title:"Temperature",
-  body:`<ul><li>Above 5 Vpp: short runs, check the hotspot every minute.</li><li>Stop at <span class="v">85 °C</span>: amplitude back to 0.7 Vpp, let the fans cool it.</li><li>Keep fan inlets clear.</li></ul>`,
-  more:[["Test data",`<p>Hotspot reached 90 °C at 6.2 Vpp and 92 °C at 6.4 Vpp. <em>Warm enough for tea. Not recommended.</em></p>`]],
-  checks:["Thermometer ready, stop at 85 °C."]},
-{id:"measure", sec:"Run", title:"Record the measurement", fig:"scope", hl:["meas"], scr:{trace:"sine",amp:0.85,scale:"1 V/div   20 µs/div",meas:["Pk-Pk(1): 4.57 V","Avg(1): 1 mV"]},
-  body:`<p><span class="v">I pk = Pk-Pk / 0.4</span>  ·  <span class="v">I rms = I pk / 1.414</span></p><p>Log amplitude, frequency, scope Pk-Pk and sensor output together.</p>`,
-  more:[["Amplitude for a target current","@amp"],["Field at sensor","@field"]]},
+  body:`${rl([["gun","","Sweep the IR thermometer","Slowly across the transistors below the fans. It records the highest reading as MAX."],["therm","bad","MAX must stay below 85 °C","If it reaches 85 °C, bring the amplitude back to 700 mVpp and let the fans cool it."],["fan","","Airflow","Keep the fan inlets clear."]])}
+  <p style="color:var(--mute);font-size:.9rem">The sweep gives the hotspot temperature, not its exact position. That is all you need.</p>`,
+  checks:["Thermometer ready, MAX below 85 °C."]},
+{id:"measure", sec:"Run", title:"Read the current", fig:"scope", hl:["cursors","mread"], scr:{trace:"sine",amp:0.85,cursors:true,scale:"1 V/div   20 µs/div",meas:["ΔY: 4.57 V"]},
+  body:`<p>Freeze the trace, then read peak-to-peak with the Y cursors (ΔY).</p><div class="fx">I pk = (ΔY ÷ 2) ÷ |Z|</div><div class="fx">|Z| = √(0.2² + (2π·f·L)²)</div>`,
+  widget:"meas",
+  more:[["Field at sensor","@field"]]},
 {id:"running", sec:"Run", runend:true, title:"Running",
-  body:`<p>Take as many points as you need. Two rules while you work:</p>
-  <ul><li>Before switching <b>any</b> output off or on, bring the generator back to <span class="v">0.700 Vpp</span>.</li><li>Stay under <span class="v">6.6 Vpp</span> and <span class="v">85 °C</span>.</li></ul>
-  <p>When you are done, use <b>Shut down</b> on the home page.</p>`},
+  body:`${EMERG}${rl([["hand","bad","NEVER touch any PCB",""],["sine","","Out1 on only at 700 mVpp",""],["therm","","Limits","<b>6.6 Vpp</b> and 85 °C."]])}`},
 
 /* ===================== SHUTDOWN FLOW ===================== */
-{id:"sd1", flow:"shut", sec:"Shutdown", title:"Generator to 0.7 Vpp", fig:"afg", hl:["bz2","knob"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z",out:true},
-  body:`${seq("Ampl/High","→","0",".","7","→","Vpp")}<p>Wind the current down before anything is switched.</p>`,
-  checks:["Amplitude is 0.700 Vpp."]},
-{id:"sd2", flow:"shut", sec:"Shutdown", title:"Supply output off", fig:"itech", hl:["onoff"], scr:{v:"40.000",a:"0.000",w:"0.0",out:false},
-  body:`${seq("On/Off")}<p>Supply first. The key goes dark.</p>`,
+{id:"sd2", flow:"shut", sec:"Shutdown", title:"Supply output off", fig:"itech", hl:["onoff"], scr:{v:"40.000",a:"0.000",w:"0.000",out:false},
+  body:`${seq("On/Off")}<p>Supply first.</p>`,
   checks:["Supply output off."]},
-{id:"sd3", flow:"shut", sec:"Shutdown", title:"Generator output off", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"0.700 Vpp",load:"High Z",out:false},
-  body:`${seq("Out1 On/Off")}<p>Leave the amplitude at 0.700 Vpp for the next session.</p>`,
-  checks:["Generator Out1 off, amplitude left at 0.700 Vpp."]},
+{id:"sd3", flow:"shut", sec:"Shutdown", title:"Generator output off", fig:"afg", hl:["out1"], scr:{freq:"10.000 000 00 kHz",ampl:"4.000 Vpp",offset:"20 mV",load:"High Z",out:false},
+  body:`${seq("Out1 On/Off")}`,
+  checks:["Generator output off."]},
+{id:"sd1", flow:"shut", sec:"Shutdown", title:"Generator back to 700 mVpp", fig:"afg", hl:["bz2","n7","n0"], scr:{freq:"10.000 000 00 kHz",ampl:"700.000 mVpp",offset:"20 mV",load:"High Z",out:false},
+  body:`${seq("Ampl/High","→","7","0","0","→","mVpp")}<p>Ready for the next session.</p>`,
+  checks:["Amplitude is 700 mVpp."]},
 {id:"sd4", flow:"shut", sec:"Shutdown", title:"Power everything off",
-  body:`<ol><li>Supply power switch</li><li>Generator ⏻</li><li>Scope ⏻</li></ol><p>Give the source 5 minutes before handling. Leave the E-STOP released.</p>`,
+  body:`${stat([["1","Supply power switch"],["2","Generator ⏻"],["3","Scope ⏻"]])}${rl([["hot","bad","Do not touch the PCBs or the load for 5 minutes","They may still be hot from operation."]])}<p>Leave the E-STOP released.</p>`,
   checks:["Supply, generator and scope powered off."]},
-{id:"done", flow:"shut", sec:"Session", done:true, title:"Session complete",
-  body:`<p style="color:var(--mute)">The wire carried current, the sensor saw a field, and nothing caught fire. That's a win.</p>`}
+{id:"done", flow:"shut", sec:"Session", done:true, title:"Session complete", body:``}
 ];
-const Q={rules:"What happens inside the box stays inside the box.",estop:"Good to know where it is before you ever need it.",off:"Electrons are patient. They will wait.",
-  sensor:"If the sensor moves, your data moves with it.",outon:"This step should be boring. Boring is good.",scope:"The one place where a flat line is good news.",
-  temp:"It is not a hand warmer, however cold the lab gets.",sd3:"The next person will be glad it starts at 0.7 Vpp.",genamp:"Inductors dislike surprises.",dsoscale:"Measure twice, amplify once.",wiring:"Two minutes here saves an afternoon later."};
+const Q={};
 S.forEach(s=>{if(Q[s.id]) s.q=Q[s.id];});
-const GREET=["Electrons, form an orderly sine.", "Charge carriers, assemble.", "Electrons don't need coffee. You might.", "Your electrons have been expecting you.", "The electrons were getting bored. Welcome back.", "Ready when you are. So are a few billion billion electrons.", "Stay positive. Unless you're an electron.", "Electrons on standby, waiting for your cue.", "Somewhere, an electron just stretched and yawned.", "The electrons have warmed up. Have you?", "Electrons love a good loop. So do we.", "Every electron in that wire is about to have a busy day.", "Hello, operator. The electrons await your command.", "Let's make some amps.", "Let's put the A in AC.", "Let's ride the sine wave.", "Let's get some flux moving.", "Let's turn volts into teslas.", "Let's turn a small sine into a big one.", "Let's make the wire famous.", "Let's do some physics on purpose.", "Let's give the Hall effect something to talk about.", "Let's make some field data worth plotting.", "Let's make Biot and Savart proud.", "Let's make today's measurements the clean ones.", "Let's convert curiosity into amperes.", "Let's generate some attractive results.", "Let's get that sensor talking.", "Let's turn joules into data.", "Let's make a magnetic field the old-fashioned way.", "Let's make the sensor earn its keep.", "Let's see what the Hall plate thinks today.", "Let's make this a low-noise kind of day.", "Let's make some current flow.", "Today's forecast: sunny, with scattered amperes.", "Today's forecast: 15 A peak, high chance of Hall voltage.", "Good morning, afternoon, or whatever your scope's time base says.", "A fine day to obey Maxwell.", "Today we turn milliteslas into millivolts.", "Today's special: 10 kHz, served fresh.", "New day, new data, same trusty sine.", "What a lovely day for a magnetic field.", "Today feels like a 10 kHz kind of day.", "Today's mood: in phase.", "Another day, another clean sine.", "Today's agenda: amperes first, answers next.", "Here's to a day with zero offset.", "Today, the wire gets the spotlight.", "The loop is closed. The day is open.", "Rain or shine, the sine is fine.", "Sine of the times.", "Steady hands, steady sine.", "Clean sine, good time.", "Current flows, the field grows.", "Wire runs straight, data looks great.", "Amps in the wire, data to admire.", "Low noise, good choice.", "Volts go in, amperes win.", "Phase aligned, peace of mind.", "Loop closed tight, readings right.", "Signal clean, sensor keen.", "Bench is set, best data yet.", "Field is strong, nothing wrong.", "Cool and calm, no alarm.", "Hall plate ready, current steady.", "Let the current flow and the data follow.", "Hello, ampere enthusiast.", "Ready to push some charge around?", "Welcome. Please keep your hands inside the safe operating area.", "Ohm's law still holds. Let's use it.", "Greetings. The sine waves are warmed up.", "Kirchhoff says what goes in must come out. Let's test that.", "Ampère would be proud. Probably.", "No smoke has been released today. Let's keep it that way.", "Your wire is about to have a busy day.", "Phase: 0°. Mood: positive.", "Right-hand rule engaged.", "0.2 Ω of pure honesty awaits.", "Peak current, peak focus.", "Zero DC offset is the dream. Let's live it.", "Your bus bar called. It wants current.", "15 A peak, 0 drama.", "Faraday would have loved this bench.", "Nothing up our sleeve but 0.55 µH.", "Small sine in, big sine out.", "Greetings, magnetician.", "Fresh sine, hot off the generator.", "Low distortion, high spirits.", "Big current, small offset, zero smoke.", "The sensor is listening. Say something in teslas.", "RMS: Really Magnificent Sine.", "Everything is in phase. Including us.", "Let the induction begin.", "Current events, literally.", "Welcome in. The sine wave saved you a seat.", "Hello. Somewhere a magnetic field is about to appear.", "Hello, field researcher. Literally.", "Welcome back to the land of 0.2 Ω.", "Good to see you. The bench is ready when you are.", "Welcome back. Coffee first, then current.", "Supply at 40 V, enthusiasm at 11.", "Positive half-cycle, positive attitude.", "Amps are a team sport. You're the captain.", "Measure twice, amplify once.", "Charge up, it's going to be a good session.", "Welcome. May your offsets be small and your signals large.", "Good to see you. Fields are free today.", "Hello again. Same rules, fresh data."];
+const BYE=["Nicely done. The electrons are clocking out too.","All quiet on the 0.2 Ω front.","That's a wrap. The sine wave thanks you.","Session closed. The field has left the building.","Good work. The Hall plate has a lot to think about.","Data in the bag, smoke still in the parts.","Clean shutdown, clean conscience.","Rest well, little transistors.","The electrons have gone home. You may too.","Until next time, keep it in phase.","Another session, zero drama. Well played.","Volts off, results on.","Current is zero. Satisfaction is not.","See you at 700 mVpp next time.","Fans can rest now. So can you.","The loop is open. The day is yours.","Ampère would approve of that session.","That's enough teslas for one day.","Everything off, everything fine.","Logged, measured, switched off. Perfect order.","May your plots be as clean as that shutdown.","Bench at rest. Mission complete.","The sine wave has left the chat.","Good session. The heatsink agrees.","Off with the volts, on with the analysis."];
+const GREET=["Electrons, form an orderly sine.", "Charge carriers, assemble.", "Electrons don't need coffee. You might.", "Your electrons have been expecting you.", "The electrons were getting bored. Welcome back.", "Ready when you are. So are a few billion billion electrons.", "Stay positive. Unless you're an electron.", "Electrons on standby, waiting for your cue.", "Somewhere, an electron just stretched and yawned.", "The electrons have warmed up. Have you?", "Electrons love a good loop. So do we.", "Every electron in that wire is about to have a busy day.", "Hello, operator. The electrons await your command.", "Let's make some amps.", "Let's put the A in AC.", "Let's ride the sine wave.", "Let's get some flux moving.", "Let's turn volts into teslas.", "Let's turn a small sine into a big one.", "Let's make the wire famous.", "Let's do some physics on purpose.", "Let's give the Hall effect something to talk about.", "Let's make some field data worth plotting.", "Let's make Biot and Savart proud.", "Let's make today's measurements the clean ones.", "Let's convert curiosity into amperes.", "Let's generate some attractive results.", "Let's get that sensor talking.", "Let's turn joules into data.", "Let's make a magnetic field the old-fashioned way.", "Let's make the sensor earn its keep.", "Let's see what the Hall plate thinks today.", "Let's make this a low-noise kind of day.", "Let's make some current flow.", "Today's forecast: sunny, with scattered amperes.", "Today's forecast: 15 A peak, high chance of Hall voltage.", "Good morning, afternoon, or whatever your scope's time base says.", "A fine day to obey Maxwell.", "Today we turn milliteslas into millivolts.", "Today's special: 10 kHz, served fresh.", "New day, new data, same trusty sine.", "What a lovely day for a magnetic field.", "Today feels like a 10 kHz kind of day.", "Today's mood: in phase.", "Another day, another clean sine.", "Today's agenda: amperes first, answers next.", "Here's to a day with zero offset.", "Today, the wire gets the spotlight.", "The loop is closed. The day is open.", "Rain or shine, the sine is fine.", "Sine of the times.", "Steady hands, steady sine.", "Clean sine, good time.", "Current flows, the field grows.", "Wire runs straight, data looks great.", "Amps in the wire, data to admire.", "Low noise, good choice.", "Volts go in, amperes win.", "Phase aligned, peace of mind.", "Loop closed tight, readings right.", "Signal clean, sensor keen.", "Bench is set, best data yet.", "Field is strong, nothing wrong.", "Cool and calm, no alarm.", "Hall plate ready, current steady.", "Let the current flow and the data follow.", "Hello, ampere enthusiast.", "Ready to push some charge around?", "Welcome. Please keep your hands inside the safe operating area.", "Ohm's law still holds. Let's use it.", "Greetings. The sine waves are warmed up.", "Kirchhoff says what goes in must come out. Let's test that.", "Ampère would be proud. Probably.", "No smoke has been released today. Let's keep it that way.", "Your wire is about to have a busy day.", "Phase: 0°. Mood: positive.", "Right-hand rule engaged.", "0.2 Ω of pure honesty awaits.", "Peak current, peak focus.", "Zero DC offset is the dream. Let's live it.", "Your bus bar called. It wants current.", "15 A peak, 0 drama.", "Faraday would have loved this bench.", "Nothing up our sleeve but 0.55 µH.", "Small sine in, big sine out.", "Greetings, magnetician.", "Fresh sine, hot off the generator.", "Low distortion, high spirits.", "Big current, small offset, zero smoke.", "The sensor is listening. Say something in teslas.", "RMS: Really Magnificent Sine.", "Everything is in phase. Including us.", "Let the induction begin.", "Current events, literally.", "Welcome in. The sine wave saved you a seat.", "Hello. Somewhere a magnetic field is about to appear.", "Hello, field researcher. Literally.", "Welcome back to the land of 0.2 Ω.", "Good to see you. The bench is ready when you are.", "Welcome back. Coffee first, then current.", "Supply at 40 V, enthusiasm at 11.", "Positive half-cycle, positive attitude.", "Amps are a team sport. You're the captain.", "Steady current, steady data.", "Charge up, it's going to be a good session.", "Welcome. May your offsets be small and your signals large.", "Good to see you. Fields are free today.", "Hello again. Same rules, fresh data."];
 let greet=(()=>{let last=-1; try{last=+localStorage.getItem("acsrc-greet");}catch(e){} let i=Math.floor(Math.random()*GREET.length); if(i===last) i=(i+1)%GREET.length; try{localStorage.setItem("acsrc-greet",i);}catch(e){} return i;})();
 /* ---------- state ---------- */
-const LS="acsrc-proc-v7";
+const LS="acsrc-proc-v9";
 const fresh=()=>({cur:"home",reached:0,mode:null,flow:"run",choice:{},ticks:{}});
 let st=fresh();
 try{localStorage.removeItem(LS);}catch(e){} /* every visit starts clean */
@@ -745,7 +802,7 @@ const cur=()=>S[idx(st.cur)];
 const ok=s=>!(s.home&&st.flow!=="shut"&&!st.mode)&&!(s.choice&&!st.choice[s.choice])&&(s.checks||[]).every((_,j)=>st.ticks[s.id+"_"+j]);
 
 /* ---------- drawing ---------- */
-const CAP={afg:"Tektronix AFG1062",itech:"ITECH IT-M3904C-80-80",scope:"Keysight DSOX3054T",estop:"E-STOP · on the orange box",wiring:"Bench wiring"};
+const CAP={afg:"Tektronix AFG1062",itech:"ITECH IT-M3904C-80-80",scope:"Keysight DSOX3054T",estop:"E-STOP",wiring:"Bench wiring"};
 function draw(step){
   const st_=$("stage"); if(!st_) return;
   const host=$("art");
@@ -765,7 +822,7 @@ function draw(step){
        <rect class="edge" x="${b.x-P}" y="${b.y-P}" width="${b.width+2*P}" height="${b.height+2*P}" rx="7"/>`+
        (numbered?`<g class="pin"><circle cx="${b.x-P}" cy="${b.y-P}" r="10"/><text x="${b.x-P}" y="${b.y-P}">${i+1}</text></g>`:"")).join("");
   }
-  const cap=svg.querySelector("#cap"); if(cap) cap.addEventListener("click",()=>{const d=cap.style.transform; cap.style.transform=d?"":"translateY(10px)"; toast(d?"Released.":"Stopped. In the drawing, at least.");});
+  const cap=svg.querySelector("#cap"); if(cap) cap.addEventListener("click",()=>{const d=cap.style.transform; cap.style.transform=d?"":"translateY(10px)"; toast(d?"Released: ON.":"Pressed: OFF.");});
   const [fx,fy,fw,fh]=full.split(" ").map(Number); let zv=null;
   if((window.innerWidth<900||step.fig==="itech")&&hl.length&&x2>x1&&step.fig!=="estop"){
     let p=34,x=x1-p,y=y1-p,w=x2-x1+2*p,h=y2-y1+2*p; const mw=Math.min(fw,380); if(w<mw){x-=(mw-w)/2;w=mw;}
@@ -778,10 +835,10 @@ function draw(step){
 }
 
 /* ---------- widgets ---------- */
-const IPK_MAX=K_IPK*VPP_MAX;   // ≈ 15.1 A peak, tested at 10 kHz
 const R_LOAD=0.2, L_DEF=0.55e-6, F_CAL=10e3, F_MIN=10e3, F_MAX=50e3;
 const Zmag=(f,L)=>Math.hypot(R_LOAD,2*Math.PI*f*L);
-const G_PK=K_IPK*Zmag(F_CAL,L_DEF);   // output volts (peak) per generator Vpp, from the 10 kHz calibration
+const G_PK=G_OUT;
+const IPK_MAX=G_OUT*VPP_MAX/Zmag(F_CAL,L_DEF);   // ≈ 14.9 A peak, tested at 10 kHz
 function ampCalc(){
   const d=document.createElement("div"); d.className="calc"; let unit="pk";
   d.innerHTML=`<div><label class="cl" for="ci">Target current</label>
@@ -796,7 +853,7 @@ function ampCalc(){
     <div><span>Load impedance</span><b id="o5"></b></div><div><span>Scope Pk-Pk</span><b id="o2"></b></div>
     <div><span>Supply draw</span><b id="o4"></b></div><div><span>Max at this f</span><b id="o6"></b></div></div>
   <div class="msg" id="om" aria-live="polite"></div>
-  <p class="note">Model: I<sub>pk</sub> = ${G_PK.toFixed(3)} V/Vpp × V<sub>gen</sub> / |0.2 Ω + jωL|, calibrated at 10 kHz with 0.55 µH. Scope reads the resistive part (I × 0.2 Ω). Tested up to 15 A peak at 10 kHz only.</p>`;
+  <p class="note">Model: V<sub>OUT,pk</sub> = ${G_PK.toFixed(3)} × V<sub>gen</sub> (Vpp), measured at the buffer OUT at 10 kHz. I<sub>pk</sub> = V<sub>OUT,pk</sub> ÷ |Z|, |Z| = √(0.2² + (2πfL)²). Tested up to ≈15 A peak at 10 kHz only.</p>`;
   const q=id=>d.querySelector(id);
   const u=()=>{const raw=q("#ci").value, v=parseFloat(raw), fk=parseFloat(q("#cf").value), Lu=parseFloat(q("#cL").value), m=q("#om");
     const ipk=unit==="rms"?v*Math.SQRT2:v, f=fk*1e3, L=Lu*1e-6;
@@ -819,7 +876,7 @@ function ampCalc(){
     q("#o1").innerHTML=show?`${vpp.toFixed(2)}<small>Vpp</small>`:"–";
     q("#o3").textContent=(isFinite(v)&&v>0)?`${ipk.toFixed(2)} A / ${(ipk/Math.SQRT2).toFixed(2)} A`:"–";
     q("#o5").textContent=okIn?`${(Z*1000).toFixed(0)} mΩ ∠${ph.toFixed(0)}°`:"–";
-    q("#o2").textContent=(isFinite(v)&&v>0)?(ipk*R_LOAD*2).toFixed(2)+" V":"–";
+    q("#o2").textContent=okIn?(ipk*Z*2).toFixed(2)+" V":"–";
     q("#o4").textContent=(isFinite(v)&&v>0)?(P_IDLE+24*ipk/Math.PI).toFixed(0)+" W":"–";
     q("#o6").textContent=okIn?imax.toFixed(1)+" A pk":"–";
     q("#ox").hidden=!(exp&&!err);
@@ -851,9 +908,48 @@ function fieldCalc(){
     d.querySelector("#b1").textContent=g?(B*1e3).toFixed(3)+" mT":"–"; d.querySelector("#b2").textContent=g?(B*1e3/Math.SQRT2).toFixed(3)+" mT":"–";};
   d.querySelectorAll("input").forEach(x=>x.addEventListener("input",u)); u(); return d;
 }
+function offCalc(){
+  const d=document.createElement("div"); d.className="calc";
+  d.innerHTML=`<div class="grp" style="margin:0">Offset checker</div><div class="inpair">
+    <div><label class="cl" for="omx">Y1 (positive peak)</label><div class="inrow"><input id="omx" type="number" inputmode="decimal" step="1" value="322"><span class="unit">mV</span></div></div>
+    <div><label class="cl" for="omn">Y2 (negative peak)</label><div class="inrow"><input id="omn" type="number" inputmode="decimal" step="1" value="-318"><span class="unit">mV</span></div></div></div>
+    <div class="big"><span>Offset</span><b id="oo"></b></div><div class="msg" id="oom" aria-live="polite"></div>`;
+  const q=x=>d.querySelector(x);
+  const u=()=>{const mx=parseFloat(q("#omx").value), mn=parseFloat(q("#omn").value), m=q("#oom"); let err="";
+    if(!isFinite(mx)||!isFinite(mn)) err="Enter both values.";
+    else if(mx<=0) err="Y1 should be positive.";
+    else if(mn>=0) err="Y2 should be negative: enter it with its minus sign.";
+    const o=(mx+mn)/2, good=!err&&Math.abs(o)<=5;
+    q("#oo").innerHTML=err?"–":`${o>0?"+":""}${o.toFixed(1)}<small>mV</small>`;
+    d.classList.toggle("err",!!err); m.className="msg"+(err?" e":"");
+    if(err) m.textContent=err;
+    else if(good){ m.textContent="Within ±5 mV. OK."; m.style.color="var(--ok)"; }
+    else { m.textContent="Outside ±5 mV. Do not adjust: shut down and report."; m.style.color="var(--warn)"; }};
+  d.querySelectorAll("input").forEach(x=>x.addEventListener("input",u)); u(); return d;
+}
+function measCalc(){
+  const d=document.createElement("div"); d.className="calc";
+  d.innerHTML=`<div class="grp" style="margin:0">Scope to current</div>
+    <div><label class="cl" for="mpp">Scope ΔY (peak-to-peak)</label><div class="inrow"><input id="mpp" type="number" inputmode="decimal" min="0" step="0.01" value="4.57"><span class="unit">V</span></div></div>
+    <div class="inpair">
+    <div><label class="cl" for="mf">Frequency</label><div class="inrow"><input id="mf" type="number" inputmode="decimal" min="10" max="50" step="1" value="10"><span class="unit">kHz</span></div></div>
+    <div><label class="cl" for="mL">Loop inductance</label><div class="inrow"><input id="mL" type="number" inputmode="decimal" min="0" step="0.05" value="0.55"><span class="unit">µH</span></div></div></div>
+    <div class="big"><span>Current</span><b id="mi"></b></div><div class="sm"><div><span>|Z|</span><b id="mz"></b></div><div><span>I rms</span><b id="mrr"></b></div></div>
+    <div class="msg" id="mm" aria-live="polite"></div>`;
+  const q=x=>d.querySelector(x);
+  const u=()=>{const pp=parseFloat(q("#mpp").value), fk=parseFloat(q("#mf").value), Lu=parseFloat(q("#mL").value), m=q("#mm"); let err="";
+    if(!isFinite(pp)||pp<=0) err="Enter the scope ΔY.";
+    else if(!isFinite(fk)||fk<10||fk>50) err="Frequency must be between 10 and 50 kHz.";
+    else if(!isFinite(Lu)||Lu<0) err="Inductance must be 0 µH or more.";
+    const Z=Zmag(fk*1e3,Lu*1e-6), ip=pp/2/Z;
+    d.classList.toggle("err",!!err); m.className="msg"+(err?" e":""); m.textContent=err;
+    q("#mi").innerHTML=err?"–":`${ip.toFixed(2)}<small>A pk</small>`;
+    q("#mz").textContent=err?"–":`${(Z*1000).toFixed(0)} mΩ`; q("#mrr").textContent=err?"–":`${(ip/Math.SQRT2).toFixed(2)} A`;};
+  d.querySelectorAll("input").forEach(x=>x.addEventListener("input",u)); u(); return d;
+}
 function opts(list,sel,pick,label){
   const b=document.createElement("div"); b.className="opts"; b.setAttribute("role","group"); b.setAttribute("aria-label",label);
-  b.innerHTML=list.map(o=>`<button type="button" class="opt" data-v="${o[0]}" aria-pressed="${sel===o[0]}"><b>${E(o[1])}</b><span>${E(o[2])}</span></button>`).join("");
+  b.innerHTML=list.map(o=>`<button type="button" class="opt ${o[3]||""}" data-v="${o[0]}" aria-pressed="${sel===o[0]}"><b>${E(o[1])}</b><span>${E(o[2])}</span></button>`).join("");
   b.querySelectorAll("button").forEach(x=>x.addEventListener("click",()=>{b.querySelectorAll("button").forEach(y=>y.setAttribute("aria-pressed",String(y===x))); pick(x.dataset.v);})); return b;
 }
 let tt; function toast(m){let t=document.querySelector(".toast"); if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.appendChild(t);} t.textContent=m; clearTimeout(tt); tt=setTimeout(()=>t.remove(),2800);}
@@ -867,17 +963,20 @@ function render(){
   const m=$("main"); m.className="step "+(s.fig?"fig":"nofig");
   m.innerHTML=(s.fig?`<div class="stage" id="stage"><div id="art"></div><span class="cap">${E(CAP[s.fig])}</span><button class="zb" id="zb" type="button" hidden>FULL</button></div>`:"")+
    `<section class="sheet ${s.home?'home':''}">${s.home||s.done||s.runend?"":`<div class="num">${String(pos).padStart(2,"0")}</div>`}
-    ${s.home?`<div class="sec">AC Current Source V1</div><h1 class="greet" id="greet" title="Another one">${E(GREET[greet])}</h1>`:`<div class="sec">${E(s.sec)}</div><h1>${E(s.title)}</h1>`}
+    ${s.home?`<div class="sec">AC Current Source V1</div><h1 class="greet" id="greet" title="Another one">${E(GREET[greet])}</h1>`:s.done?`<div class="sec">Session complete</div><h1 class="greet">${E(BYE[Math.floor(Math.random()*BYE.length)])}</h1>`:`<div class="sec">${E(s.sec)}</div><h1>${E(s.title)}</h1>`}
     <div class="body">${s.body}</div>${s.q?`<p class="q">${E(s.q)}</p>`:""}<div id="x"></div><div id="mr"></div><div id="ck"></div></section>`;
   if(s.home){
     const x=$("x");
     const grp=(t)=>{const d=document.createElement("div"); d.className="hgrp"; d.innerHTML=`<div class="hlab">${t}</div>`; x.appendChild(d); return d;};
     grp("Start a session").appendChild(opts([["beg","Beginner","First time, or it has been a while. Step by step, with reasons."],["exp","Experienced","You have run it before. Short checklists."]],null,v=>{st=fresh(); st.mode=v; st.flow="run"; save(); setTimeout(()=>go(1),170);},"Start a session"));
-    grp("Other").appendChild(opts([["shut","Shut down","Finished measuring? Switch everything off in the right order."],["calc","Calculator","Generator amplitude for a target current."]],null,v=>{
-      if(v==="shut"){ st=fresh(); st.flow="shut"; st.cur="sd1"; zoomed=true; save(); setTimeout(()=>{render(); window.scrollTo(0,0);},170); }
+    grp("Other").appendChild(opts([["shut","Shut down","Finished measuring? Switch everything off in the right order.","alt"],["calc","Calculator","Generator amplitude for a target current.","alt"]],null,v=>{
+      if(v==="shut"){ st=fresh(); st.flow="shut"; st.cur="sd2"; zoomed=true; save(); setTimeout(()=>{render(); window.scrollTo(0,0);},170); }
       else { openCalc(); x.querySelectorAll(".opt").forEach(o=>o.setAttribute("aria-pressed","false")); }
     },"Other actions"));
     $("greet").addEventListener("click",()=>{greet=(greet+1+Math.floor(Math.random()*(GREET.length-1)))%GREET.length; $("greet").textContent=GREET[greet];}); }
+  if(s.widget==="offset") $("x").appendChild(offCalc());
+  if(s.widget==="amp") $("x").appendChild(ampCalc());
+  if(s.widget==="meas") $("x").appendChild(measCalc());
   if(s.choice) $("x").appendChild(opts(s.options,st.choice[s.choice],v=>{st.choice[s.choice]=v;save();setTimeout(()=>go(1),170);},"Settings match?"));
   if(s.more){
     const bar=document.createElement("div"); bar.className="more"; const dr=document.createElement("div"); dr.className="drawer"; dr.hidden=true;
@@ -902,6 +1001,7 @@ function nav(){
   const s=cur(), vis=V(), pos=vis.indexOf(s), g=ok(s), last=pos===vis.length-1;
   $("bBack").disabled=pos<=0;
   $("bNextT").textContent=last?"Home":"Next";
+  document.querySelector("nav.nav").classList.toggle("runend",!!s.runend); $("bShut").hidden=!s.runend;
   $("bNext").disabled=!g&&!last;
   const h=$("hint");
   if(!g){h.textContent=(s.home||s.choice)?"Select an option":"Confirm all items";h.className="hint need";}
@@ -911,6 +1011,7 @@ function go(d){const vis=V(),p=vis.indexOf(cur()),n=p+d; if(n<0||n>=vis.length) 
 function restart(){const s=cur(), m=st.mode; if(s.runend){st.cur="home";} else {st=fresh(); st.mode=m;} save(); render(); window.scrollTo(0,0);}
 $("bNext").addEventListener("click",()=>{const v=V(); if(v.indexOf(cur())===v.length-1) restart(); else go(1);});
 $("bBack").addEventListener("click",()=>go(-1));
+$("bShut").addEventListener("click",()=>{st=fresh(); st.flow="shut"; st.cur="sd2"; zoomed=true; save(); render(); window.scrollTo(0,0);});
 
 /* ---------- panels ---------- */
 const openOv=id=>{$(id).hidden=false;$(id).querySelector("[data-close]").focus();};
@@ -929,7 +1030,7 @@ $("tbSteps").addEventListener("click",()=>{
   openOv("ovSteps");
 });
 $("bReset").addEventListener("click",()=>{st=fresh();save();closeOv();render();});
-$("tbTheme").addEventListener("click",()=>{const r=document.documentElement,c=r.getAttribute("data-theme"),dk=c?c==="dark":matchMedia("(prefers-color-scheme: dark)").matches; r.setAttribute("data-theme",dk?"light":"dark");});
+$("tbTheme").addEventListener("click",()=>{const r=document.documentElement,c=r.getAttribute("data-theme"),dk=c==="dark"; r.setAttribute("data-theme",dk?"light":"dark");});
 document.addEventListener("keydown",e=>{
   if(e.target.matches("input")) return;
   if(document.querySelector(".ov:not([hidden])")){ if(e.key==="Escape") closeOv(); return; }

@@ -8,7 +8,8 @@
 <meta property="og:title" content="Darshit Darji">
 <meta property="og:description" content="Electronics engineer · Sensors, VLSI, PCB design, robotics">
 <meta property="og:image" content="https://darshitdarji.com/assets/darshit.jpg">
-<meta name="theme-color" content="#08090b">
+<meta name="theme-color" content="#fbfbfa">
+<script>try{if(localStorage.getItem("dd-theme")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
 <link rel="canonical" href="https://darshitdarji.com/">
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://darshitdarji.com/">
@@ -16,7 +17,7 @@
 <meta name="twitter:title" content="Darshit Darji">
 <meta name="twitter:description" content="Electronics engineer · Sensors, VLSI, PCB design, robotics">
 <meta name="twitter:image" content="https://darshitdarji.com/assets/darshit.jpg">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Darshit Darji", "url": "https://darshitdarji.com/", "image": "https://darshitdarji.com/assets/darshit.jpg", "jobTitle": "Electronics Engineer", "email": "mailto:darshitdiy@gmail.com", "sameAs": ["https://www.linkedin.com/in/darshit27", "https://github.com/Darshit27"], "alumniOf": {"@type": "CollegeOrUniversity", "name": "Birla Vishvakarma Mahavidyalaya"}, "knowsAbout": ["Analog and mixed-signal circuit design", "VLSI", "PCB design", "Force and torque sensors", "Robotics hardware", "Instrumentation"]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Darshit Darji", "url": "https://darshitdarji.com/", "image": "https://darshitdarji.com/assets/darshit.jpg", "jobTitle": "Electronics Engineer", "email": "mailto:darshitdiy@gmail.com", "sameAs": ["https://www.linkedin.com/in/darshit27"], "alumniOf": {"@type": "CollegeOrUniversity", "name": "Birla Vishvakarma Mahavidyalaya"}, "knowsAbout": ["Analog and mixed-signal circuit design", "VLSI", "PCB design", "Force and torque sensors", "Robotics hardware", "Instrumentation"]}</script>
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,14 +26,28 @@
 /* Dark and quiet. Serif display for headings, Barlow for reading, mono for labels and dates.
    Effects are kept light: nothing pins or hijacks the scroll. */
 :root{
-  --bg:#08090b; --bg2:#0f1215; --line:#1e2428;
-  --ink:#f1f2f0; --soft:#b8bfc2; --mute:#7a8489;
-  --acc:#ff6a2e; --cyan:#58d6c9; --copper:#c8753e;
+  --bg:#fbfbfa; --bg2:#f2f3f3; --line:#e2e5e6;
+  --ink:#101416; --soft:#454f54; --mute:#6c767b;
+  --acc:#d9501a; --cyan:#12857a; --copper:#b5652f;
+  --h06:rgba(16,20,22,.07); --h16:rgba(16,20,22,.14); --h05:rgba(16,20,22,.05); --h08:rgba(16,20,22,.07); --h04:rgba(16,20,22,.03);
+  --navbg:rgba(251,251,250,.78); --sheetbg:rgba(251,251,250,.97); --topbg:rgba(255,255,255,.88);
+  --dimw:#c4cacd; --cardhov:#c7cdd0; --pcbbase:#e3e6e8; --prihov:#000;
+  --t-inst:#3b8a12; --t-robot:#a5690c; --t-space:#4656d0;
   --f-serif:Georgia,"Source Serif 4","Times New Roman",serif;
   --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"Martian Mono",ui-monospace,Menlo,Consolas,monospace;
   --gut:max(20px,env(safe-area-inset-left,0px));
   --navh:60px;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#08090b; --bg2:#0f1215; --line:#1e2428;
+  --ink:#f1f2f0; --soft:#b8bfc2; --mute:#7a8489;
+  --acc:#ff6a2e; --cyan:#58d6c9; --copper:#c8753e;
+  --h06:rgba(255,255,255,.06); --h16:rgba(255,255,255,.16); --h05:rgba(255,255,255,.05); --h08:rgba(255,255,255,.08); --h04:rgba(255,255,255,.04);
+  --navbg:rgba(8,9,11,.72); --sheetbg:rgba(8,9,11,.96); --topbg:rgba(15,18,21,.8);
+  --dimw:#353d42; --cardhov:#3a4247; --pcbbase:#171c20; --prihov:#fff;
+  --t-inst:#9fe870; --t-robot:#e8b15c; --t-space:#a9b7ff;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -56,26 +71,28 @@ section{position:relative}
 .skip{position:absolute;left:-999px;top:8px;z-index:100;background:var(--ink);color:var(--bg);padding:8px 12px;border-radius:6px}
 .skip:focus{left:12px}
 nav.top{position:fixed;inset:0 0 auto;z-index:50;padding-top:env(safe-area-inset-top,0px);
-  background:rgba(8,9,11,.72);-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid rgba(255,255,255,.06)}
+  background:var(--navbg);-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--h06)}
 nav.top .wrap{display:flex;align-items:center;gap:6px;height:var(--navh)}
 .brand{font:600 1.05rem var(--f-body);letter-spacing:.02em;text-decoration:none;margin-right:auto;white-space:nowrap}
 .navl{display:flex;gap:2px}
 .navl a{font:500 .86rem var(--f-body);color:var(--soft);text-decoration:none;padding:8px 11px;border-radius:999px;transition:color .15s,background .15s}
-.navl a:hover{color:var(--ink);background:rgba(255,255,255,.05)}
-.navl a.active{color:var(--ink);background:rgba(255,255,255,.08)}
-.navbtn{font:600 .84rem var(--f-body);text-decoration:none;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.16);margin-left:8px;white-space:nowrap}
+.navl a:hover{color:var(--ink);background:var(--h05)}
+.navl a.active{color:var(--ink);background:var(--h08)}
+.navbtn{font:600 .84rem var(--f-body);text-decoration:none;padding:8px 14px;border-radius:999px;border:1px solid var(--h16);margin-left:8px;white-space:nowrap}
 .navbtn:hover{border-color:var(--acc)}
-.menu{display:none;background:none;border:1px solid rgba(255,255,255,.16);color:var(--ink);font:600 .84rem var(--f-body);padding:8px 14px;border-radius:999px;cursor:pointer;margin-left:8px}
+.menu{display:none;background:none;border:1px solid var(--h16);color:var(--ink);font:600 .84rem var(--f-body);padding:8px 14px;border-radius:999px;cursor:pointer;margin-left:8px}
+.thm{width:38px;height:38px;border-radius:50%;border:1px solid var(--h16);background:none;color:var(--ink);display:grid;place-items:center;cursor:pointer;margin-left:8px;padding:0}
+.thm svg{width:17px;height:17px}.thm:hover{border-color:var(--acc)}
 .prog{position:absolute;left:0;bottom:-1px;height:2px;background:var(--acc);width:calc(var(--sp,0)*100%)}
 @media (max-width:1000px){ .navl,.navbtn.hide-s{display:none} .menu{display:inline-block} }
-.sheet{position:fixed;inset:0;z-index:60;background:rgba(8,9,11,.96);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+.sheet{position:fixed;inset:0;z-index:60;background:var(--sheetbg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   padding:calc(env(safe-area-inset-top,0px) + 18px) var(--gut) 30px;display:flex;flex-direction:column}
 .sheet[hidden]{display:none}
 .sheet .row{display:flex;justify-content:space-between;align-items:center;height:42px;margin-bottom:20px}
 .sheet a{font:500 1.6rem/1.35 var(--f-body);text-decoration:none;padding:6px 0;border-bottom:1px solid var(--line)}
 .sheet a.g{font:500 1rem var(--f-body);color:var(--acc);border:0;margin-top:22px}
 .totop{position:fixed;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;width:46px;height:46px;border-radius:50%;
-  border:1px solid rgba(255,255,255,.16);background:rgba(15,18,21,.8);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--ink);cursor:pointer;
+  border:1px solid var(--h16);background:var(--topbg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--ink);cursor:pointer;
   display:grid;place-items:center;opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .25s,transform .25s}
 .totop.show{opacity:1;pointer-events:auto;transform:none}
 
@@ -90,15 +107,15 @@ nav.top .wrap{display:flex;align-items:center;gap:6px;height:var(--navh)}
 .hero .role{font:400 clamp(1.05rem,2vw,1.3rem)/1.5 var(--f-body);color:var(--soft);margin:22px auto 0;max-width:42ch}
 .cta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:30px}
 .btn{display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:999px;text-decoration:none;font:600 .95rem var(--f-body);
-  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);transition:border-color .15s,background .15s}
+  border:1px solid var(--h16);background:var(--h04);transition:border-color .15s,background .15s}
 .btn:hover{border-color:var(--acc)}
 .btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.btn.pri:hover{background:#fff}
+.btn.pri:hover{background:var(--prihov)}
 .btn svg{width:17px;height:17px;flex:none}
 
 /* ---------- about ---------- */
 .about p.big{font:400 clamp(1.45rem,2.8vw,2.1rem)/1.45 var(--f-body);max-width:38ch;margin:0}
-.about p.big span{color:#353d42;transition:color .3s}
+.about p.big span{color:var(--dimw);transition:color .3s}
 .about p.big span.on{color:var(--ink)}
 
 /* ---------- now ---------- */
@@ -130,14 +147,14 @@ nav.top .wrap{display:flex;align-items:center;gap:6px;height:var(--navh)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .card{border-radius:18px;padding:22px 22px 20px;background:var(--bg2);border:1px solid var(--line);display:flex;flex-direction:column;gap:8px;
   transition:border-color .2s,transform .2s}
-.card:hover{border-color:#3a4247;transform:translateY(-2px)}
+.card:hover{border-color:var(--cardhov);transform:translateY(-2px)}
 .card .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .card .tag{font:500 .62rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
 .card .d{font:400 .66rem var(--f-mono);color:var(--mute)}
 .card h3{font:600 1.15rem/1.3 var(--f-body);margin-top:4px}
 .card p{color:var(--soft);font-size:.95rem;margin:0}
 .card .at{font-size:.85rem;color:var(--mute);margin-top:auto;padding-top:6px}
-.t-inst{color:#9fe870}.t-vlsi{color:var(--cyan)}.t-sense{color:var(--acc)}.t-robot{color:#e8b15c}.t-space{color:#a9b7ff}
+.t-inst{color:var(--t-inst)}.t-vlsi{color:var(--cyan)}.t-sense{color:var(--acc)}.t-robot{color:var(--t-robot)}.t-space{color:var(--t-space)}
 .card[hidden]{display:none}
 .card .go{margin-top:auto;padding-top:10px;font:600 .9rem var(--f-body);color:var(--acc);text-decoration:none}
 .card .go:hover{text-decoration:underline}
@@ -146,15 +163,16 @@ nav.top .wrap{display:flex;align-items:center;gap:6px;height:var(--navh)}
 .list{border-top:1px solid var(--line)}
 .li{display:grid;grid-template-columns:150px 1fr auto;gap:6px 24px;padding:18px 0;border-bottom:1px solid var(--line);align-items:baseline}
 .li .k{font:500 .68rem var(--f-mono);letter-spacing:.06em;color:var(--mute)}
-.li .k.g{color:var(--cyan)}.li .k.f{color:#e8b15c}
+.li .k.g{color:var(--cyan)}.li .k.f{color:var(--t-robot)}
 .li h3{font:500 1.1rem/1.4 var(--f-body)}
 .li .r{font:400 .7rem var(--f-mono);color:var(--mute);text-align:right}
 @media (max-width:700px){.li{grid-template-columns:1fr}.li .r{text-align:left}}
-.skills{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.skills{display:grid;grid-template-columns:repeat(2,1fr);gap:30px}
 .skills h3{font:500 .7rem var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:12px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips span{padding:8px 13px;border-radius:999px;border:1px solid var(--line);color:var(--soft);font-size:.92rem}
 @media (max-width:760px){.skills{grid-template-columns:1fr}}
+@media (max-width:600px){footer{padding-left:64px;padding-right:64px}}
 
 /* ---------- contact ---------- */
 .contact h2{font-size:clamp(2.6rem,6vw,4.2rem)}
@@ -178,7 +196,7 @@ main{position:relative;z-index:2}
 <body>
 <a class="skip" href="#about">Skip to content</a>
 <svg id="pcb" viewBox="0 0 34 1000" preserveAspectRatio="none" aria-hidden="true">
-  <path d="M17 0 V180 L8 200 V420 L24 440 V640 L12 660 V1000" fill="none" stroke="#171c20" stroke-width="2"/>
+  <path d="M17 0 V180 L8 200 V420 L24 440 V640 L12 660 V1000" fill="none" style="stroke:var(--pcbbase)" stroke-width="2"/>
   <path id="pcbLive" d="M17 0 V180 L8 200 V420 L24 440 V640 L12 660 V1000" fill="none" stroke="#c8753e" stroke-width="2"/>
 </svg>
 
@@ -189,6 +207,7 @@ main{position:relative;z-index:2}
     <a href="#patents">Patents</a><a href="#awards">Awards</a><a href="#education">Education</a><a href="#contact">Contact</a>
   </div>
   <a class="navbtn hide-s" href="/guides/">Lab guides</a>
+  <button class="thm" id="thm" type="button" aria-label="Switch light or dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
   <button class="menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="sheet">Menu</button>
   <span class="prog" aria-hidden="true"></span>
 </div></nav>
@@ -304,7 +323,6 @@ main{position:relative;z-index:2}
   <div class="skills rv">
     <div><h3>Hardware</h3><div class="chips"><span>VLSI</span><span>R&amp;D</span><span>PCB design (rigid &amp; flex)</span><span>Prototyping</span><span>Testing</span><span>3D modelling</span></div></div>
     <div><h3>Software</h3><div class="chips"><span>Cadence</span><span>Magic VLSI</span><span>ngspice</span><span>LTspice</span><span>KiCad</span><span>MATLAB</span><span>Fusion 360</span><span>AutoCAD</span></div></div>
-    <div><h3>Working style</h3><div class="chips"><span>Patience</span><span>Attention to detail</span><span>Communication</span><span>Leadership</span></div></div>
   </div>
 </div></section>
 
@@ -326,11 +344,10 @@ main{position:relative;z-index:2}
   <div class="cta rv">
     <a class="btn pri" href="mailto:darshitdiy@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>darshitdiy@gmail.com</a>
     <a class="btn" href="https://www.linkedin.com/in/darshit27" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.5c0-1.3-.02-3-1.83-3-1.83 0-2.11 1.43-2.11 2.9V21H9z"/></svg>LinkedIn</a>
-    <a class="btn" href="https://github.com/Darshit27" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>GitHub</a>
   </div>
 </div></section>
 </main>
-<footer>© <span id="yr"></span> Darshit Darji</footer>
+<footer>© <span id="yr"></span> Darshit Darji. All rights reserved.</footer>
 
 <script>
 (function(){
@@ -339,6 +356,8 @@ const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = s => document.querySelector(s);
 const root = document.documentElement;
 $("#yr").textContent = new Date().getFullYear();
+$("#thm").addEventListener("click",()=>{const dk=root.getAttribute("data-theme")!=="dark"; if(dk) root.setAttribute("data-theme","dark"); else root.removeAttribute("data-theme");
+  try{localStorage.setItem("dd-theme",dk?"dark":"light");}catch(e){} document.querySelector('meta[name="theme-color"]').content=dk?"#08090b":"#fbfbfa";});
 
 /* projects, patents and awards are written in the HTML above; this only filters them */
 const grid=$("#grid");
