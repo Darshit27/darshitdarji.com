@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="description" content="Step-by-step operating procedure for the AC Current Source V1: setup, power-up, current calculator and safe shutdown.">
 <link rel="canonical" href="https://darshitdarji.com/guides/ac-current-source-v1/">
 <style>body{margin:0}img{max-width:100%}</style>
@@ -138,6 +142,7 @@ tr.lim td{color:var(--warn);font-weight:600}
 .lim6{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:14px 0;padding:14px 16px;border-radius:14px;background:var(--warn-soft);color:var(--warn);max-width:58ch}
 .lim6 span{font-weight:600;font-size:.95rem}.lim6 b{font:700 2rem/1 var(--f-mono)}
 ol.sl{padding-left:1.3em;margin:12px 0;max-width:58ch}ol.sl li{margin:6px 0}
+.calc.over #o1,.calc.over #o2,.calc.over #o3,.calc.over #o4,.calc.over #b1,.calc.over #b2,.calc.over #mi,.calc.over #mrr{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--warn);opacity:.55}
 .fx{font:600 .95rem var(--f-mono);background:var(--fill);border-radius:12px;padding:12px 14px;margin:12px 0;max-width:58ch;overflow-wrap:anywhere}
 #x .calc{margin-top:18px;background:var(--fill);border-radius:18px;padding:16px}
 .sign .h{font:600 .62rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
@@ -368,7 +373,8 @@ svg .mono{font-family:var(--f-mono)}
 <script>
 (function(){
 "use strict";
-const G_OUT=6.03/2/6.6, VPP_MAX=6.6, P_IDLE=10.4;   /* G_OUT: V peak at buffer OUT per generator Vpp, measured at 10 kHz */
+const IPK_MAX=15, VPP_MAX=6.6, P_IDLE=10.4;
+const G_OUT=IPK_MAX*Math.hypot(0.2,2*Math.PI*10e3*0.55e-6)/VPP_MAX;   /* V peak at buffer OUT per generator Vpp: 6.6 Vpp gives 15 A peak at 10 kHz, 0.55 µH (measured 6.03 Vpp out, within 1 %) */
 
 /* ---------- small SVG helpers ---------- */
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
@@ -842,7 +848,6 @@ function draw(step){
 const R_LOAD=0.2, L_DEF=0.55e-6, F_CAL=10e3, F_MIN=10e3, F_MAX=50e3;
 const Zmag=(f,L)=>Math.hypot(R_LOAD,2*Math.PI*f*L);
 const G_PK=G_OUT;
-const IPK_MAX=G_OUT*VPP_MAX/Zmag(F_CAL,L_DEF);   // ≈ 14.9 A peak, tested at 10 kHz
 function ampCalc(){
   const d=document.createElement("div"); d.className="calc"; let unit="pk";
   d.innerHTML=`<div><label class="cl" for="ci">Target current</label>
@@ -857,25 +862,25 @@ function ampCalc(){
     <div><span>Load impedance</span><b id="o5"></b></div><div><span>Scope Pk-Pk</span><b id="o2"></b></div>
     <div><span>Supply draw</span><b id="o4"></b></div><div><span>Max at this f</span><b id="o6"></b></div></div>
   <div class="msg" id="om" aria-live="polite"></div>
-  <p class="note">Model: V<sub>OUT,pk</sub> = ${G_PK.toFixed(3)} × V<sub>gen</sub> (Vpp), measured at the buffer OUT at 10 kHz. I<sub>pk</sub> = V<sub>OUT,pk</sub> ÷ |Z|, |Z| = √(0.2² + (2πfL)²). Tested up to ≈15 A peak at 10 kHz only.</p>`;
+  <p class="note">Model: V<sub>OUT,pk</sub> = ${G_PK.toFixed(3)} × V<sub>gen</sub> (Vpp), at the buffer OUT. I<sub>pk</sub> = V<sub>OUT,pk</sub> ÷ |Z|, |Z| = √(0.2² + (2πfL)²). Limits: 15 A peak, 6.6 Vpp. Tested at 10 kHz only. <s>Struck-through</s> values are not usable.</p>`;
   const q=id=>d.querySelector(id);
   const u=()=>{const raw=q("#ci").value, v=parseFloat(raw), fk=parseFloat(q("#cf").value), Lu=parseFloat(q("#cL").value), m=q("#om");
     const ipk=unit==="rms"?v*Math.SQRT2:v, f=fk*1e3, L=Lu*1e-6;
     const okIn=isFinite(v)&&v>0&&isFinite(fk)&&fk>=F_MIN/1e3&&fk<=F_MAX/1e3&&isFinite(Lu)&&Lu>=0;
     const Z=okIn?Zmag(f,L):NaN, ph=okIn?Math.atan2(2*Math.PI*f*L,R_LOAD)*180/Math.PI:NaN;
     const vpp=okIn?ipk*Z/G_PK:NaN, imax=okIn?Math.min(IPK_MAX,G_PK*VPP_MAX/Z):NaN;
-    let err="", warn="", exp=false, bad="";
+    let err="", warn="", exp=false, bad="", over=false;
     if(raw===""||!isFinite(v)){ err="Enter a current."; bad="#ci"; }
     else if(v<=0){ err="Current must be greater than 0."; bad="#ci"; }
     else if(!isFinite(fk)||fk<10||fk>50){ err="Frequency must be between 10 and 50 kHz."; bad="#cf"; }
     else if(!isFinite(Lu)||Lu<0){ err="Inductance must be 0 µH or more."; bad="#cL"; }
     else if(Lu>5){ err="Over 5 µH is outside what this model covers. Shorten the loop."; bad="#cL"; }
-    else if(ipk>IPK_MAX){ err=`Beyond V1's limit of ${IPK_MAX.toFixed(1)} A peak (${(IPK_MAX/Math.SQRT2).toFixed(1)} A rms).`; bad="#ci"; }
-    else if(vpp>VPP_MAX) bad="#ci", err=`Needs ${vpp.toFixed(2)} Vpp, beyond the ${VPP_MAX} Vpp limit. At ${fk} kHz with ${Lu} µH the most you can get is ${imax.toFixed(1)} A peak.`;
+    else if(ipk>IPK_MAX+1e-9){ over=true; err=`Beyond V1's limit of ${IPK_MAX.toFixed(1)} A peak (${(IPK_MAX/Math.SQRT2).toFixed(1)} A rms).`; bad="#ci"; }
+    else if(vpp>VPP_MAX+1e-9) over=true, bad="#ci", err=`Needs ${vpp.toFixed(2)} Vpp, beyond the ${VPP_MAX} Vpp limit. At ${fk} kHz with ${Lu} µH the most you can get is ${imax.toFixed(1)} A peak.`;
     else if(fk>10 && vpp>5){ exp=true; warn="Experimental: this current has not been tested above 10 kHz. Short runs, watch the temperature, verify on the scope."; }
     else if(fk>10){ exp=true; warn="Above 10 kHz the model is an estimate. Verify the current on the scope."; }
     else if(vpp>5) warn="Above 5 Vpp: keep runs short and watch the temperature.";
-    d.classList.toggle("err",!!err); d.querySelectorAll("input").forEach(x=>x.classList.toggle("bad","#"+x.id===bad));
+    d.classList.toggle("err",!!err); d.classList.toggle("over",over); d.querySelectorAll("input").forEach(x=>x.classList.toggle("bad","#"+x.id===bad));
     const show=isFinite(vpp);
     q("#o1").innerHTML=show?`${vpp.toFixed(2)}<small>Vpp</small>`:"–";
     q("#o3").textContent=(isFinite(v)&&v>0)?`${ipk.toFixed(2)} A / ${(ipk/Math.SQRT2).toFixed(2)} A`:"–";
@@ -905,9 +910,9 @@ function fieldCalc(){
     if(!isFinite(I)){ err="Enter a current."; bad="fi"; }
     else if(!isFinite(rm)){ err="Enter a distance."; bad="fr"; }
     else if(I<=0){ err="Current must be greater than 0."; bad="fi"; }
-    else if(I>IPK_MAX){ err=`Beyond V1's limit of ${IPK_MAX.toFixed(1)} A peak.`; bad="fi"; }
+    else if(I>IPK_MAX){ err=`Beyond V1's limit of ${IPK_MAX} A peak.`; bad="fi"; }
     else if(rm<=0){ err="Distance must be greater than 0."; bad="fr"; }
-    d.classList.toggle("err",!!err); d.querySelectorAll("input").forEach(x=>x.classList.toggle("bad",x.id===bad)); m.className="msg"+(err?" e":""); m.textContent=err;
+    d.classList.toggle("err",!!err); d.classList.toggle("over",isFinite(I)&&I>IPK_MAX); d.querySelectorAll("input").forEach(x=>x.classList.toggle("bad",x.id===bad)); m.className="msg"+(err?" e":""); m.textContent=err;
     const g=isFinite(I)&&I>0&&rm>0, B=g?2e-7*I/(rm/1000):0;
     d.querySelector("#b1").textContent=g?(B*1e3).toFixed(3)+" mT":"–"; d.querySelector("#b2").textContent=g?(B*1e3/Math.SQRT2).toFixed(3)+" mT":"–";};
   d.querySelectorAll("input").forEach(x=>x.addEventListener("input",u)); u(); return d;
@@ -946,9 +951,11 @@ function measCalc(){
     else if(!isFinite(fk)||fk<10||fk>50) err="Frequency must be between 10 and 50 kHz.";
     else if(!isFinite(Lu)||Lu<0) err="Inductance must be 0 µH or more.";
     const Z=Zmag(fk*1e3,Lu*1e-6), ip=pp/2/Z;
-    d.classList.toggle("err",!!err); m.className="msg"+(err?" e":""); m.textContent=err;
-    q("#mi").innerHTML=err?"–":`${ip.toFixed(2)}<small>A pk</small>`;
-    q("#mz").textContent=err?"–":`${(Z*1000).toFixed(0)} mΩ`; q("#mrr").textContent=err?"–":`${(ip/Math.SQRT2).toFixed(2)} A`;};
+    if(!err&&ip>IPK_MAX) err=`Above V1's ${IPK_MAX} A peak limit. Reduce the amplitude.`;
+    d.classList.toggle("err",!!err); d.classList.toggle("over",!!err&&ip>IPK_MAX); m.className="msg"+(err?" e":""); m.textContent=err;
+    const nv=err&&!(ip>IPK_MAX);
+    q("#mi").innerHTML=nv?"–":`${ip.toFixed(2)}<small>A pk</small>`;
+    q("#mz").textContent=nv?"–":`${(Z*1000).toFixed(0)} mΩ`; q("#mrr").textContent=nv?"–":`${(ip/Math.SQRT2).toFixed(2)} A`;};
   d.querySelectorAll("input").forEach(x=>x.addEventListener("input",u)); u(); return d;
 }
 function opts(list,sel,pick,label){

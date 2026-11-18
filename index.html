@@ -4,10 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Darshit Darji</title>
-<meta name="description" content="Darshit Darji, electronics engineer. Sensors, VLSI, PCB design and robotic hardware.">
+<meta name="description" content="Darshit Darji is an electronics engineer working on sensors, VLSI, PCB design and robotic hardware, from research prototypes to tested lab instruments.">
 <meta property="og:title" content="Darshit Darji">
 <meta property="og:description" content="Electronics engineer · Sensors, VLSI, PCB design, robotics">
 <meta property="og:image" content="https://darshitdarji.com/assets/darshit.jpg">
+<meta property="og:image:width" content="900">
+<meta property="og:image:height" content="900">
+<meta property="og:image:alt" content="Darshit Darji">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="image_src" href="https://darshitdarji.com/assets/darshit.jpg">
 <meta name="theme-color" content="#fbfbfa">
 <script>try{if(localStorage.getItem("dd-theme")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
 <link rel="canonical" href="https://darshitdarji.com/">
@@ -18,7 +23,12 @@
 <meta name="twitter:description" content="Electronics engineer · Sensors, VLSI, PCB design, robotics">
 <meta name="twitter:image" content="https://darshitdarji.com/assets/darshit.jpg">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Darshit Darji", "url": "https://darshitdarji.com/", "image": "https://darshitdarji.com/assets/darshit.jpg", "jobTitle": "Electronics Engineer", "email": "mailto:darshitdiy@gmail.com", "sameAs": ["https://www.linkedin.com/in/darshit27"], "alumniOf": {"@type": "CollegeOrUniversity", "name": "Birla Vishvakarma Mahavidyalaya"}, "knowsAbout": ["Analog and mixed-signal circuit design", "VLSI", "PCB design", "Force and torque sensors", "Robotics hardware", "Instrumentation"]}</script>
-<link rel="icon" href="assets/favicon.png">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Darshit Darji","url":"https://darshitdarji.com/"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfilePage","url":"https://darshitdarji.com/","primaryImageOfPage":{"@type":"ImageObject","url":"https://darshitdarji.com/assets/darshit.jpg","width":900,"height":900},"mainEntity":{"@type":"Person","name":"Darshit Darji","url":"https://darshitdarji.com/","image":"https://darshitdarji.com/assets/darshit.jpg","jobTitle":"Electronics Engineer"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Martian+Mono:wght@400;500&display=swap">
@@ -158,6 +168,9 @@ nav.top .wrap{display:flex;align-items:center;gap:6px;height:var(--navh)}
 .card[hidden]{display:none}
 .card .go{margin-top:auto;padding-top:10px;font:600 .9rem var(--f-body);color:var(--acc);text-decoration:none}
 .card .go:hover{text-decoration:underline}
+.card .vid{align-self:flex-start;margin-top:10px;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px 0 10px;border-radius:999px;border:1px solid var(--h16);color:var(--ink);text-decoration:none;font:600 .85rem var(--f-body);transition:border-color .15s,color .15s}
+.card .vid svg{width:16px;height:16px;fill:var(--acc)}
+.card .vid:hover{border-color:var(--acc);color:var(--acc)}
 
 /* ---------- patents / awards / education ---------- */
 .list{border-top:1px solid var(--line)}
@@ -225,7 +238,7 @@ main{position:relative;z-index:2}
 <section class="hero" id="hero">
   <canvas id="field" aria-hidden="true"></canvas>
   <div class="inner">
-    <div class="portrait"><img src="assets/darshit.jpg" alt="Darshit Darji" width="176" height="176"></div>
+    <div class="portrait"><img src="/assets/darshit.jpg" alt="Darshit Darji, electronics engineer" width="176" height="176" fetchpriority="high"></div>
     <div class="label">Electronics engineer</div>
     <h1>Darshit Darji</h1>
     <p class="role">I work on sensors, VLSI, PCB design and robotic hardware, from research prototypes to tested instruments.</p>
@@ -295,10 +308,10 @@ main{position:relative;z-index:2}
 <article class="card rv" data-k="sense"><div class="top"><span class="tag t-sense">Sensors</span><span class="d">Feb – Apr 2024</span></div><h3>Mobile mapping system</h3><p>Electronics for a mule-mounted terrain mapping system with LiDAR, depth camera and IMU.</p><div class="at">IISc</div></article>
 <article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">Jul 2023</span></div><h3>Wireless iBus bridge over ESP-NOW</h3><p>Synchronised multi-drone control for swarm applications with 7 ms communication latency.</p><div class="at">GUJCOST</div></article>
 <article class="card rv" data-k="space"><div class="top"><span class="tag t-space">Space</span><span class="d">Dec 2022 – May 2023</span></div><h3>Closed-loop control of a hexapod mechanism</h3><p>Hardware and Python control software for a hexapod being developed for a space telescope.</p><div class="at">ISRO</div></article>
-<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">2022 – 2025</span></div><h3>iDropX21 eye-drop instilling robot</h3><p>Concept for an AI-enabled autonomous eye-drop instilling robot. Patented; recognised by Autodesk.</p><div class="at">Autodesk</div></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">2022 – 2025</span></div><h3>iDropX21 eye-drop instilling robot</h3><p>Concept for an AI-enabled autonomous eye-drop instilling robot. Patented; recognised by Autodesk.</p><div class="at">Autodesk</div><a class="vid" href="https://youtu.be/-8HQ0VBXi6k" target="_blank" rel="noopener" aria-label="Watch the iDropX21 video on YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch video</a></article>
 <article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">Feb – Jul 2022</span></div><h3>Lagori playing robots, DD Robocon</h3><p>Led electronics and design. Best New Team award at DD Robocon 2022.</p><div class="at">IIT Delhi</div></article>
-<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">Nov 2020 – Dec 2021</span></div><h3>OxidaneX21 underwater robot</h3><p>Five-DOF underwater robot. First prize and ₹5,00,000 at GUJCOST Robofest 2.0.</p><div class="at">GUJCOST</div></article>
-<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">2017</span></div><h3>Quadcopter</h3><p>Wooden-frame quadcopter. Best Technical Project at a school science fair.</p><div class="at">School</div></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">Nov 2020 – Dec 2021</span></div><h3>OxidaneX21 underwater robot</h3><p>Five-DOF underwater robot. First prize and ₹5,00,000 at GUJCOST Robofest 2.0.</p><div class="at">GUJCOST</div><a class="vid" href="https://youtu.be/d-sza2mzV4o" target="_blank" rel="noopener" aria-label="Watch the OxidaneX21 underwater robot video on YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch video</a></article>
+<article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">2017</span></div><h3>Quadcopter</h3><p>Wooden-frame quadcopter. Best Technical Project at a school science fair.</p><div class="at">School</div><a class="vid" href="https://youtu.be/67AWi43cLCc" target="_blank" rel="noopener" aria-label="Watch the quadcopter video on YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch video</a></article>
 <article class="card rv" data-k="robot"><div class="top"><span class="tag t-robot">Robotics</span><span class="d">2016</span></div><h3>CNC plotter</h3><p>Wooden CNC plotter built in high school.</p><div class="at">School</div></article>
 </div>
 </div></section>
